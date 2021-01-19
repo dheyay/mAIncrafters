@@ -37,3 +37,6 @@ body > .container {
 code {
   font-size: 80%;
 }
+
+img[alt='stage 1'] { width: 200px; }
+img[alt='stage 2'] { width: 200px; }
