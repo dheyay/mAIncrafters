@@ -12,5 +12,5 @@ title:  Team
 ## Ananth Krishnan 
 ***UCI Net ID***: ananthk1
 
-## USER 3
-***UCI Net ID***: ucinetid3
+## 	Steven Seader
+***UCI Net ID***: sseader
