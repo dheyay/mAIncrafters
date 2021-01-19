@@ -20,24 +20,24 @@ Depending on our evaluation metrics, we could opt for route planning via some so
 ## Evaluation Plan
 
 #### Metrics:
-Time spent on task: The time spent should be minimized. The AI can be considered successful if it approaches or is better than the time spent by an average human on the same task.
+Time spent on task: The time spent should be minimized. The AI can be considered successful if it approaches or is better than the time spent by an average human on the same task.\
 
 #### Distance travelled: 
 The amount of distance traveled by the agent should also be minimized. This can be compared to the amount of distance traveled by a human player who has not plotted out their exact path, unlike the AI.
-Accuracy: The measure of how close the AI is to completing the task. If all necessary materials are not available, it will be judged on how close it was to accomplishing the task, i.e. finishing all the other subtasks.
+Accuracy: The measure of how close the AI is to completing the task. If all necessary materials are not available, it will be judged on how close it was to accomplishing the task, i.e. finishing all the other subtasks.\
 
 #### Baseline:
-The baseline for both metrics will be the time and distance spent by an average user. If the AI is within 150% the standard baseline, it can be regarded as successful.
+The baseline for both metrics will be the time and distance spent by an average user. If the AI is within 150% the standard baseline, it can be regarded as successful.\
 
 ### Stages of Full Functionality:
 
 ##### Stage 1: 
-Gather materials for something basic: like wood logs for wood planks. The most basic test: requiring the agent to travel to the wood log and break it, and place it into the inventory.
+Gather materials for something basic: like wood logs for wood planks. The most basic test: requiring the agent to travel to the wood log and break it, and place it into the inventory.\
 
 ![stage 1](https://user-images.githubusercontent.com/43485198/104982350-54b97d00-59bf-11eb-9def-fabe6ba4c577.png)
 
 ##### Stage 2: 
-Gather materials for complex items: Iron ore for iron ingots for iron pickaxe. Here the agent needs to use the particular type of tool required to gather iron ore, adding another layer of complexity.
+Gather materials for complex items: Iron ore for iron ingots for iron pickaxe. Here the agent needs to use the particular type of tool required to gather iron ore, adding another layer of complexity.\
 
 ![stage 2](https://user-images.githubusercontent.com/43485198/104982480-9fd39000-59bf-11eb-9153-3c296cfbb588.png)
 
