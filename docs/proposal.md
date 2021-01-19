@@ -21,7 +21,10 @@ Time spent on task: The time spent should be minimized. The AI can be considered
 
 #### Distance travelled: 
 The amount of distance traveled by the agent should also be minimized. This can be compared to the amount of distance traveled by a human player who has not plotted out their exact path, unlike the AI.
-Accuracy: The measure of how close the AI is to completing the task. If all necessary materials are not available, it will be judged on how close it was to accomplishing the task, i.e. finishing all the other subtasks.  
+
+
+#### Accuracy: 
+The measure of how close the AI is to completing the task. If all necessary materials are not available, it will be judged on how close it was to accomplishing the task, i.e. finishing all the other subtasks.  
 
 
 #### Baseline:
