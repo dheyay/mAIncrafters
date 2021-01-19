@@ -33,10 +33,12 @@ The baseline for both metrics will be the time and distance spent by an average 
 
 ##### Stage 1: 
 Gather materials for something basic: like wood logs for wood planks. The most basic test: requiring the agent to travel to the wood log and break it, and place it into the inventory.
+
 ![stage 1](https://user-images.githubusercontent.com/43485198/104982350-54b97d00-59bf-11eb-9def-fabe6ba4c577.png)
 
 ##### Stage 2: 
 Gather materials for complex items: Iron ore for iron ingots for iron pickaxe. Here the agent needs to use the particular type of tool required to gather iron ore, adding another layer of complexity.
+
 ![stage 2](https://user-images.githubusercontent.com/43485198/104982480-9fd39000-59bf-11eb-9153-3c296cfbb588.png)
 
 ##### Stage 3: 
