@@ -6,8 +6,8 @@ title:  Team
 # {{ page.title }}
 
 
-## USER 1
-***UCI Net ID***: ucinetid1
+## Dheyay Desai
+***UCI Net ID***: desaidn
 
 ## USER 2
 ***UCI Net ID***: ucinetid2
