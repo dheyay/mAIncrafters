@@ -34,19 +34,19 @@ The baseline for both metrics will be the time and distance spent by an average 
 ### Stages of Full Functionality:
 
 ##### Stage 1: 
-Gather materials for something basic: like wood logs for wood planks. The most basic test: requiring the agent to travel to the wood log and break it, and place it into the inventory.  
+Gather materials for something basic: like wood logs for wood planks in fully observable, limited, environment. The most basic test: requiring the agent to travel to the wood log and break it, and place it into the inventory.  
 
 ![stage 1](https://user-images.githubusercontent.com/43485198/104982350-54b97d00-59bf-11eb-9def-fabe6ba4c577.png)
 
 
 ##### Stage 2: 
-Gather materials for complex items: Iron ore for iron ingots for iron pickaxe. Here the agent needs to use the particular type of tool required to gather iron ore, adding another layer of complexity.  
+Gather materials for complex items: Iron ore for iron ingots for iron pickaxe, again in a fully observable, limited, environment. Here the agent needs to use the particular type of tool required to gather iron ore, adding another layer of complexity.  
 
 ![stage 2](https://user-images.githubusercontent.com/43485198/104982480-9fd39000-59bf-11eb-9153-3c296cfbb588.png)
 
 
 ##### Stage 3: 
-Craft items once all materials are in inventory and after having navigated to the crafting table. The layout would be the same as in stage 2, but would require the agent to move to the crafting table and construct items according to a recipe.
+Craft items once all materials are in inventory and after having navigated to the crafting table. The layout would be the same as in stage 2, but would require the agent to move to the crafting table and construct items according to a recipe again in a fully observable, limited, environment.
 
 
 ##### Sanity cases include: 
