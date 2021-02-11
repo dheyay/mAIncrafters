@@ -24,3 +24,19 @@ We also need a video with:
 - example capture: probably a run of our demo version with full observability
 - can include summary to pad time if so desired, but there's a 3 min cap, so maybe not.
 - essentially the video is a summary of the status doc (above), with a video of a demo and some pictures/screenshots.
+
+
+
+
+
+
+
+Project Summary
+The purpose of our project is to develop an AI that can automate and optimize the process of crafting particular items. Given a specific input, the AI will recognize the ingredients it needs and will find the optimal path to it, using observation and search algorithms. Once this has been accomplished, we will also implement a memory feature that will allow it to remember where previously irrelevent items were observed when on a previous mission.
+
+Approach
+To create this AI, we split the project into 3 main tasks. The first is to recognize the input and develop a way to create complex items out of basic materials. To do this, we need to create an algorithm that could recursively recognize the ingredients and quantities of materials required to create the item. The second major task was observation and search algorithms. We need a way for the AI to learn and improve upon its search tactics as it tries to find the correct materials. To do so, we implement several path finding methods, like Dijkstra's Algorithm and A*. The final aspect is world generation. The AI needs an appropriate training ground. To do this, we have to create an area that will teach the AI patterns it can later use.
+
+Evaluation
+
+Remaining Goals and Challenges
