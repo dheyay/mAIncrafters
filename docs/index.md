@@ -3,9 +3,19 @@ layout: default
 title:  Home
 ---
 
-Source code: https://github.com/dheyay/mAIncrafters
+![stage 1](https://user-images.githubusercontent.com/43485198/104982350-54b97d00-59bf-11eb-9def-fabe6ba4c577.png)
 
-Reports:
+### What the mAIncrafters are doing?
+Our project enables our agent, Steve, to find resources on the user-generated terrain (currently flat), locate these resources present and chart a path to them for the user. Once Steve has found the items/resources available on the map that are needed, he navigates to these objects one by one and mines them, collects them. He continues this until there are no more objects to mine, then returns home to craft a new item from the retrieved resources. The item to be crafted can be specified by the user depending on the resources available in the given map area.
+
+Some project specific screenshots here - current world if possible
+
+### Our plan going ahead
+We have planned on adding more complexity to this by adding obstacles to improve navigation, an improvement in time/movement efficiency for charting the course and retreiving all items needed by the agent. 
+
+[Find our source code for the agent here](https://github.com/dheyay/mAIncrafters)
+
+More useful links related to our project:
 
 - [Proposal](proposal.html)
 - [Status](status.html)
