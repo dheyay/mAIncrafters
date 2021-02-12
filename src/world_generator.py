@@ -94,6 +94,7 @@ class SteverCrafter():
         ## or block towers with a height above "x" is considered untraversable.
 
         self.reverse = False
+
         # Return Stacks:
         self.x_return = []
         self.y_return = []
@@ -161,7 +162,8 @@ class SteverCrafter():
                         "<DrawCuboid x1='{}' x2='{}' y1='1' y2='1' z1='{}' z2='{}' type='grass'/>".format(-self.size, self.size,
                                                                                                  -self.size,
                                                                                                  self.size) + \
-                        '''
+                     '''
+                     <DrawBlock x='10' y='2' z='10' type='diamond_ore'/>
                         </DrawingDecorator>
                     <ServerQuitWhenAnyAgentFinishes/>
                   </ServerHandlers>
@@ -226,13 +228,13 @@ class SteverCrafter():
             except StopIteration:
                 break
 
-            if current_space + self.obs_size * 2 < len(grid_obs) and \
-                    current_best_length[current_space][0] + 1 < current_best_length[current_space + self.obs_size * 2][0] and \
-                    grid_obs[current_space + self.obs_size * 2] != "air" and \
-                    current_space != current_best_length[current_space + self.obs_size * 2][1]:
-                current_best_length[current_space + self.obs_size * 2] = (
+            if current_space + (self.obs_size * 2 + 1) < len(grid_obs) and \
+                    current_best_length[current_space][0] + 1 < current_best_length[current_space + (self.obs_size * 2 + 1)][0] and \
+                    grid_obs[current_space + (self.obs_size * 2 + 1)] != "air" and \
+                    current_space != current_best_length[current_space + (self.obs_size * 2 + 1)][1]:
+                current_best_length[current_space + (self.obs_size * 2 + 1)] = (
                 current_best_length[current_space][0] + 1, current_space)
-                prio_dict[current_space + self.obs_size * 2] = current_best_length[current_space + self.obs_size * 2][0]
+                prio_dict[current_space + (self.obs_size * 2 + 1)] = current_best_length[current_space + (self.obs_size * 2 + 1)][0]
 
             if current_space + 1 < len(grid_obs) and \
                     current_best_length[current_space][0] + 1 < current_best_length[current_space + 1][0] and \
@@ -248,22 +250,20 @@ class SteverCrafter():
                 current_best_length[current_space - 1] = (current_best_length[current_space][0] + 1, current_space)
                 prio_dict[current_space - 1] = current_best_length[current_space - 1][0]
 
-            if current_space - self.obs_size * 2 >= 0 and \
-                    current_best_length[current_space][0] + 1 < current_best_length[current_space - self.obs_size * 2][
+            if current_space - (self.obs_size * 2 + 1) >= 0 and \
+                    current_best_length[current_space][0] + 1 < current_best_length[current_space - (self.obs_size * 2 + 1)][
                 0] and \
-                    grid_obs[current_space - self.obs_size * 2] != "air" and \
-                    current_space != current_best_length[current_space - self.obs_size * 2][1]:
-                current_best_length[current_space - self.obs_size * 2] = (
+                    grid_obs[current_space - (self.obs_size * 2 + 1)] != "air" and \
+                    current_space != current_best_length[current_space - (self.obs_size * 2 + 1)][1]:
+                current_best_length[current_space - (self.obs_size * 2 + 1)] = (
                 current_best_length[current_space][0] + 1, current_space)
-                prio_dict[current_space - self.obs_size * 2] = current_best_length[current_space - 1][0]
+                prio_dict[current_space - (self.obs_size * 2 + 1)] = current_best_length[current_space - 1][0]
 
         best_path = [dest]
         prev = dest
-        print("source: ", source)
         while prev != source:
             prev = current_best_length[prev][1]
             best_path.append(prev)
-            print("prev: ", prev)
 
         best_path.reverse()
 
@@ -277,7 +277,7 @@ class SteverCrafter():
         Returns
             action_list: <list> list of string discrete action commands (e.g. ['movesouth 1', 'movewest 1', ...]
         """
-        action_trans = {-self.obs_size * 2: 'movenorth 1', self.obs_size * 2: 'movesouth 1', -1: 'movewest 1',
+        action_trans = {-(self.obs_size * 2 + 1): 'movenorth 1', (self.obs_size * 2 + 1): 'movesouth 1', -1: 'movewest 1',
                         1: 'moveeast 1'}
         alist = []
         for i in range(len(path_list) - 1):
@@ -286,14 +286,63 @@ class SteverCrafter():
 
         return alist
 
-    def get_shortest_path(self, world_state):
+    def find_destination(self, grid_obs, destination_block):
+        """
+        Finds the source and destination block indexes from the list.
+
+        Args
+            grid:   <list>  the world grid blocks represented as a list of blocks (see Tutorial.pdf)
+
+        Returns
+            start: <int>   source block index in the list
+            end:   <int>   destination block index in the list
+        """
+        ## from Stack overflow: https://stackoverflow.com/questions/398299/looping-in-a-spiral
+        def spiral(X, Y):
+            x = y = 0
+            dx = 0
+            dy = -1
+            for i in range(max(X, Y) ** 2):
+                if (-X / 2 < x <= X / 2) and (-Y / 2 < y <= Y / 2):
+                    #print("location: ", x, y)
+                    #print("block at location: ", grid_obs[4*(self.obs_size**2) + self.obs_size * 2 * (y + 50) + x + 50])
+                    #print("destination_block: ", destination_block)
+                    if grid_obs[(((2*self.obs_size) + 1)**2) + (self.obs_size*2 + 1)*(50 + y) + 50 + x] == destination_block:
+                        return x, y
+                if x == y or (x < 0 and x == -y) or (x > 0 and x == 1 - y):
+                    dx, dy = -dy, dx
+                x, y = x + dx, y + dy
+
+        return spiral(2*self.obs_size, 2*self.obs_size)
+
+    def get_shortest_path(self, world_state, destination_block):
+
 
         grid = self.load_grid(world_state)
 
+        if destination_block == "air":
+            destination_index = (self.obs_size * 2 + 1) * (self.y_dest + 50) + self.x_dest + 50
 
-        current_location_index = self.obs_size * 2 * 50 + 50
+        else:
+            results = self.find_destination(grid, destination_block)
+            if results == None:
+                self.reverse = True
+                return []
+                #destination_index = self.obs_size * 2 * (self.y_home + 50) + self.x_home + 50
+            else:
+                if self.agent_near_dest():
+                    return []
+                destination_x, destination_y = results[0], results[1]
+                print("x_destination: ", destination_x)
+                print("y_destination: ", destination_y)
+                destination_index = (self.obs_size * 2 + 1) * (destination_y + 50) + destination_x + 50
+                self.true_x_dest = self.x_pos + destination_x
+                self.true_y_dest = self.x_pos + destination_y
+
+
+        current_location_index = (self.obs_size * 2 + 1) * 50 + 50
         #home_index = self.obs_size * 2 * (self.y_home + 50) + self.x_home + 50
-        destination_index = self.obs_size * 2 * (self.y_dest + 50) + self.x_dest + 50
+        #destination_index = self.obs_size * 2 * (self.y_dest + 50) + self.x_dest + 50
 
         shortest_path = self.dijkstra_shortest_path(grid, current_location_index, destination_index)
         action_list = self.extract_action_list_from_path(shortest_path)
@@ -337,6 +386,12 @@ class SteverCrafter():
                 else:
                     self.y_return.append("movesouth 1")
 
+    def agent_near_dest(self):
+        if abs(self.x_pos - self.true_x_dest) <= 1 and abs(self.y_pos - self.true_y_dest) == 0 or\
+           abs(self.x_pos - self.true_x_dest) == 0 and abs(self.y_pos - self.true_y_dest) <= 1:
+            return True
+        else:
+            return False
 
 if __name__ == '__main__':
     Steve = SteverCrafter()
@@ -344,9 +399,12 @@ if __name__ == '__main__':
 
     action_index = 0
     ## At this point, we'll need to have determined what our destination is.
-    action_list = Steve.get_shortest_path(world_state)
+    ## Air is the default that will just send it to the default destination,
+    ## but if a block is generated in the world and that type is specified,
+    ## can use that instead and it will get the path to that block
+    action_list = Steve.get_shortest_path(world_state, "diamond_ore")
 
-    temp = 0
+    temp = 1
 
     while world_state.is_mission_running:
         #sys.stdout.write(".")
@@ -359,68 +417,78 @@ if __name__ == '__main__':
         ## For reference, when we are using the observation, we are going to want to convert
         ## indices as 50 + x + obs_size * ((50 + z) + obs_size*obs_size, which will have us
         ## accessing the first layer above ground ( and generally, we have
-        ## 50 + x + obs_size * ((50 + z) + obs_size*obs_size*(layer above) for the observation
+        ## 50 + x + obs_size*2 * ((50 + z) + obs_size*obs_size*4*(layer above) for the observation
         ## space of a given layer, assuming we asked for it in the XML. Layer above = 0 is the ground,
         ## which is why when converting in the path find logic, we drop the obs_size*obs_size.
 
 
-        if Steve.x_pos == Steve.true_x_dest and Steve.y_pos == Steve.true_y_dest:
-            #### To alter the destination by 10 spaces north and 10 spaces west and move there: ####
-            ## if we_want_to_edit_dest:
-            ## Steve.x_dest -= 10
-            ## Steve.y_dest -= 10
-            ## action index = 0
-            ## action_list = Steve.get_shortest_path(world_state)
-            ## elif no_new_destinations_return_home:
-            ## I ended up just putting this below with a single destination change, then a return
+        if Steve.agent_near_dest() and Steve.reverse == False:
 
-            if temp == 0:
-                ## Pretty important and a weird result of the observations:
-                ## A destination change needs to be relative to the current position.
-                Steve.x_dest = -10
-                Steve.y_dest = -10
-                Steve.true_x_dest = Steve.x_pos - 10
-                Steve.true_y_dest = Steve.y_pos - 10
-                action_index = 0
-                action_list = Steve.get_shortest_path(world_state)
-                temp = 1
+            ## if the agent has reached within a space of the destination;
+            ## -----------------------------------------------------------
+            ##
+            ## Code for dealing with the block would go here
+            ##
+            ## -----------------------------------------------------------
 
-            else:
-                action_index = 0
+            ## We also may want a flag of sorts here that determines if the action is a
+            ## movement or not, since the
+
+            ## Then, depending on what we're looking for, go for the next closest item:
+            ## Here, I just assume we're only mining diamond ore. In reality, we'd
+            ## probably want a list/data structure with the items we want, which would
+            ## function here
+
+            ## Just find the next diamond_ore:
+            action_index = 0
+            action_list = Steve.get_shortest_path(world_state, "diamond_ore")
+            time.sleep(1)
+
+            ## if there are no diamond ore in the observation view, Steve.reverse will be
+            ## set to true, and action_list will be empty
+            if Steve.reverse == True:
                 Steve.x_return.extend(Steve.y_return)
                 action_list = Steve.x_return
-                #print(action_list)
-                Steve.reverse = True
 
-
-        # Sending the next commend from the action list -- found using the Dijkstra algo.
-        if action_index >= len(action_list):
-            print("Error:", "out of actions, but mission has not ended!")
-            time.sleep(2)
         else:
+                # Sending the next commend from the action list -- found using the Dijkstra algo.
+                if action_index >= len(action_list):
+                    print("Error:", "out of actions, but mission has not ended!")
+                    time.sleep(2)
 
-            if Steve.reverse == False:
-                Steve.update_return_path((action_list[action_index]))
+                else:
 
-            if action_list[action_index] == "moveeast 1":
-                Steve.x_pos += 1
-            elif action_list[action_index] == "movewest 1":
-                Steve.x_pos -= 1
-            elif action_list[action_index] == "movesouth 1":
-                Steve.y_pos += 1
-            elif action_list[action_index] == "movenorth 1":
-                Steve.y_pos -= 1
+                    ## If the agent is not yet on it's return journey, any movement it takes is
+                    ## used to update the return path
+                    if Steve.reverse == False:
+                        Steve.update_return_path((action_list[action_index]))
 
-            print("x_pos: ", Steve.x_pos)
-            print("y_pos: ", Steve.y_pos)
+                    ## We may want code that deals with any obstacles in the agent's way as well,
+                    ## Since it's possible that the return path gets blocked
+                    ## I also want to update the dijkstra's algorithm to avoid obstacles, but that's getting
+                    ## too invested in Dijkstra's when we will be replacing it with a search eventually.
 
-            Steve.agent_host.sendCommand(action_list[action_index])
-        action_index += 1
-        if len(action_list) == action_index:
-            # Need to wait few seconds to let the world state realise I'm in end block.
-            # Another option could be just to add no move actions -- I thought sleep is more elegant.
-            time.sleep(2)
-        world_state = Steve.agent_host.getWorldState()
-        for error in world_state.errors:
-            print("Error:",error.text)
-    #print((Steve.load_grid(world)))
+                    if action_list[action_index] == "moveeast 1":
+                        Steve.x_pos += 1
+                    elif action_list[action_index] == "movewest 1":
+                        Steve.x_pos -= 1
+                    elif action_list[action_index] == "movesouth 1":
+                        Steve.y_pos += 1
+                    elif action_list[action_index] == "movenorth 1":
+                        Steve.y_pos -= 1
+
+                    print("x_pos: ", Steve.x_pos)
+                    print("y_pos: ", Steve.y_pos)
+                    Steve.agent_host.sendCommand(action_list[action_index])
+
+                action_index += 1
+
+                if len(action_list) == action_index:
+                    # Need to wait few seconds to let the world state realise I'm in end block.
+                    # Another option could be just to add no move actions -- I thought sleep is more elegant.
+                    time.sleep(2)
+
+                world_state = Steve.agent_host.getWorldState()
+
+                for error in world_state.errors:
+                    print("Error:",error.text)
