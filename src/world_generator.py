@@ -134,11 +134,9 @@ class SteverCrafter():
     def GetMissionXML(self):
         return '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
                 <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-
                   <About>
                     <Summary>Hello world!</Summary>
                   </About>
-
                 <ServerSection>
                   <ServerInitialConditions>
                     <Time>
@@ -150,22 +148,19 @@ class SteverCrafter():
                   <ServerHandlers>
                       <FlatWorldGenerator generatorString="3;7,59*1,3*3,2;1;stronghold,biome_1(distance=32)" forceReset="1"/>
                        <DrawingDecorator>''' + \
-               "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(-self.size, self.size,
-                                                                                               self.size, self.size) + \
-               "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(self.size, self.size,
-                                                                                               self.size, -self.size) + \
-               "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(-self.size, self.size,
-                                                                                               -self.size, -self.size) + \
-               "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(-self.size, -self.size,
-                                                                                               -self.size, self.size) + \
-               "<DrawBlock x='{}' y='64' z='{}' type='log' />".format(randint(-self.size, self.size), randint(-self.size, self.size)) + \
-               "<DrawBlock x='{}' y='64' z='{}' type='log' />".format(randint(-self.size, self.size), randint(-self.size, self.size)) + \
+               "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(-self.size, self.size, self.size, self.size) + \
+               "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(self.size, self.size, self.size, -self.size) + \
+               "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(-self.size, self.size, -self.size, -self.size) + \
+               "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(-self.size, -self.size, -self.size, self.size) + \
+               "<DrawBlock x='{}' y='64' z='{}' type='log' />".format(randint(-self.size, self.size),
+                                                                      randint(-self.size, self.size)) + \
+               "<DrawBlock x='{}' y='64' z='{}' type='log' />".format(randint(-self.size, self.size),
+                                                                      randint(-self.size, self.size)) + \
                '''
           </DrawingDecorator>
           <ServerQuitWhenAnyAgentFinishes/>
         </ServerHandlers>
       </ServerSection>
-
       <AgentSection mode="Survival">
         <Name>MainCrafterBoi</Name>
         <AgentStart>
@@ -202,36 +197,34 @@ class SteverCrafter():
                 grid = observations.get(u'floorAll', 0)
                 break
         return grid
-    
+
     def block_action(self, world_state, block_type):
         allow_break_action = False
-        
+
         if world_state.is_mission_running:
             time.sleep(0.1)
             world_state = self.agent_host.getWorldState()
             print(world_state)
             if len(world_state.errors) > 0:
                 raise AssertionError('Could not load grid.')
-                
+
             if world_state.number_of_observations_since_last_state > 0:
                 # First we get the json from the observation API
                 msg = world_state.observations[-1].text
                 observations = json.loads(msg)
-                
+
                 sight_block = observations['LineOfSight']['type']
-                
+
                 if (sight_block != block_type):
                     self.agent_host.sendCommand('turn 1')
-                
+
                 print(sight_block)
                 if (sight_block == block_type):
                     self.agent_host.sendCommand('attack 1')
-                 
-                        
+
         return allow_break_action
- 
-        #self.agent_host.sendCommand('move 1') # move one ahead to make sure you collect
-        
+
+        # self.agent_host.sendCommand('move 1') # move one ahead to make sure you collect
 
     ## CONSIDERED EDIT: CREATE A LIST/DICT OF "BANNED" BLOCKS, SUCH AS LAVA OR AIR,
     ## THE THE AGENT AVOIDS WHEN LOOKING AT A PATH.
@@ -262,12 +255,14 @@ class SteverCrafter():
                 break
 
             if current_space + (self.obs_size * 2 + 1) < len(grid_obs) and \
-                    current_best_length[current_space][0] + 1 < current_best_length[current_space + (self.obs_size * 2 + 1)][0] and \
+                    current_best_length[current_space][0] + 1 < \
+                    current_best_length[current_space + (self.obs_size * 2 + 1)][0] and \
                     grid_obs[current_space + (self.obs_size * 2 + 1)] != "air" and \
                     current_space != current_best_length[current_space + (self.obs_size * 2 + 1)][1]:
                 current_best_length[current_space + (self.obs_size * 2 + 1)] = (
-                current_best_length[current_space][0] + 1, current_space)
-                prio_dict[current_space + (self.obs_size * 2 + 1)] = current_best_length[current_space + (self.obs_size * 2 + 1)][0]
+                    current_best_length[current_space][0] + 1, current_space)
+                prio_dict[current_space + (self.obs_size * 2 + 1)] = \
+                    current_best_length[current_space + (self.obs_size * 2 + 1)][0]
 
             if current_space + 1 < len(grid_obs) and \
                     current_best_length[current_space][0] + 1 < current_best_length[current_space + 1][0] and \
@@ -284,12 +279,13 @@ class SteverCrafter():
                 prio_dict[current_space - 1] = current_best_length[current_space - 1][0]
 
             if current_space - (self.obs_size * 2 + 1) >= 0 and \
-                    current_best_length[current_space][0] + 1 < current_best_length[current_space - (self.obs_size * 2 + 1)][
-                0] and \
+                    current_best_length[current_space][0] + 1 < \
+                    current_best_length[current_space - (self.obs_size * 2 + 1)][
+                        0] and \
                     grid_obs[current_space - (self.obs_size * 2 + 1)] != "air" and \
                     current_space != current_best_length[current_space - (self.obs_size * 2 + 1)][1]:
                 current_best_length[current_space - (self.obs_size * 2 + 1)] = (
-                current_best_length[current_space][0] + 1, current_space)
+                    current_best_length[current_space][0] + 1, current_space)
                 prio_dict[current_space - (self.obs_size * 2 + 1)] = current_best_length[current_space - 1][0]
 
         best_path = [dest]
@@ -310,7 +306,8 @@ class SteverCrafter():
         Returns
             action_list: <list> list of string discrete action commands (e.g. ['movesouth 1', 'movewest 1', ...]
         """
-        action_trans = {-(self.obs_size * 2 + 1): 'movenorth 1', (self.obs_size * 2 + 1): 'movesouth 1', -1: 'movewest 1',
+        action_trans = {-(self.obs_size * 2 + 1): 'movenorth 1', (self.obs_size * 2 + 1): 'movesouth 1',
+                        -1: 'movewest 1',
                         1: 'moveeast 1'}
         alist = []
         for i in range(len(path_list) - 1):
@@ -322,14 +319,13 @@ class SteverCrafter():
     def find_destination(self, grid_obs, destination_block):
         """
         Finds the source and destination block indexes from the list.
-
         Args
             grid:   <list>  the world grid blocks represented as a list of blocks (see Tutorial.pdf)
-
         Returns
             start: <int>   source block index in the list
             end:   <int>   destination block index in the list
         """
+
         ## from Stack overflow: https://stackoverflow.com/questions/398299/looping-in-a-spiral
         def spiral(X, Y):
             x = y = 0
@@ -337,51 +333,49 @@ class SteverCrafter():
             dy = -1
             for i in range(max(X, Y) ** 2):
                 if (-X / 2 < x <= X / 2) and (-Y / 2 < y <= Y / 2):
-                    #print("location: ", x, y)
-                    #print("block at location: ", grid_obs[4*(self.obs_size**2) + self.obs_size * 2 * (y + 50) + x + 50])
-                    #print("destination_block: ", destination_block)
-                    if grid_obs[(((2*self.obs_size) + 1)**2) + (self.obs_size*2 + 1)*(50 + y) + 50 + x] == destination_block:
+                    # print("location: ", x, y)
+                    # print("block at location: ", grid_obs[4*(self.obs_size**2) + self.obs_size * 2 * (y + 50) + x + 50])
+                    # print("destination_block: ", destination_block)
+                    if grid_obs[(((2 * self.obs_size) + 1) ** 2) + (self.obs_size * 2 + 1) * (
+                            50 + y) + 50 + x] == destination_block:
                         return x, y
                 if x == y or (x < 0 and x == -y) or (x > 0 and x == 1 - y):
                     dx, dy = -dy, dx
                 x, y = x + dx, y + dy
 
-        return spiral(2*self.obs_size, 2*self.obs_size)
+        return spiral(2 * self.obs_size, 2 * self.obs_size)
 
     def get_shortest_path(self, world_state, destination_block):
 
         grid = self.load_grid(world_state)
-        
-        #print(grid)
-        
+
+        # print(grid)
+
         if (destination_block == "air"):
             destination_index = (self.obs_size * 2 + 1) * (self.y_dest + 50) + self.x_dest + 50
 
         else:
             results = self.find_destination(grid, destination_block)
-            
-            #print("Results: ", results)
-            
+
+            # print("Results: ", results)
+
             if results == None:
                 self.reverse = True
                 return []
-                #destination_index = self.obs_size * 2 * (self.y_home + 50) + self.x_home + 50
+                # destination_index = self.obs_size * 2 * (self.y_home + 50) + self.x_home + 50
             else:
-                if self.agent_near_dest():
-                    return []
                 destination_x, destination_y = results[0], results[1]
-                
-                #print("x_destination: ", destination_x)
-                #print("y_destination: ", destination_y)
-                
+
+                # print("x_destination: ", destination_x)
+                # print("y_destination: ", destination_y)
+
                 destination_index = (self.obs_size * 2 + 1) * (destination_y + 50) + destination_x + 50
                 self.true_x_dest = self.x_pos + destination_x
-                self.true_y_dest = self.x_pos + destination_y
-
+                self.true_y_dest = self.y_pos + destination_y
 
         current_location_index = (self.obs_size * 2 + 1) * 50 + 50
-        #home_index = self.obs_size * 2 * (self.y_home + 50) + self.x_home + 50
-        #destination_index = self.obs_size * 2 * (self.y_dest + 50) + self.x_dest + 50
+        # home_index = self.obs_size * 2 * (self.y_home + 50) + self.x_home + 50
+        # destination_index = self.obs_size * 2 * (self.y_dest + 50) + self.x_dest + 50
 
         shortest_path = self.dijkstra_shortest_path(grid, current_location_index, destination_index)
         action_list = self.extract_action_list_from_path(shortest_path)
@@ -426,17 +420,18 @@ class SteverCrafter():
                     self.y_return.append("movesouth 1")
 
     def agent_near_dest(self):
-        if abs(self.x_pos - self.true_x_dest) <= 1 and abs(self.y_pos - self.true_y_dest) == 0 or\
-           abs(self.x_pos - self.true_x_dest) == 0 and abs(self.y_pos - self.true_y_dest) <= 1:
+        if abs(self.x_pos - self.true_x_dest) <= 1 and abs(self.y_pos - self.true_y_dest) == 0 or \
+                abs(self.x_pos - self.true_x_dest) == 0 and abs(self.y_pos - self.true_y_dest) <= 1:
             return True
         else:
             return False
+
 
 if __name__ == '__main__':
     print("Starting...")
     Steve = SteverCrafter()
     world_state = Steve.init_malmo()
-    
+
     block = "log"
 
     action_index = 0
@@ -445,11 +440,11 @@ if __name__ == '__main__':
     ## but if a block is generated in the world and that type is specified,
     ## can use that instead and it will get the path to that block
     action_list = Steve.get_shortest_path(world_state, "log")
-    #print(action_list)
+    # print(action_list)
     temp = 1
 
     while world_state.is_mission_running:
-        #sys.stdout.write(".")
+        # sys.stdout.write(".")
         time.sleep(0.1)
 
         ## Here, we would have any destination updates. The commented-out code is
@@ -463,7 +458,6 @@ if __name__ == '__main__':
         ## space of a given layer, assuming we asked for it in the XML. Layer above = 0 is the ground,
         ## which is why when converting in the path find logic, we drop the obs_size*obs_size.
 
-
         if Steve.agent_near_dest() and Steve.reverse == False:
             print("Found block")
             allow_break = Steve.block_action(world_state, block)
@@ -473,8 +467,8 @@ if __name__ == '__main__':
             ## Code for dealing with the block would go here
             ##
             ## -----------------------------------------------------------
-            #Steve.do_break_action(allow_break, block_sight, block)
-            
+            # Steve.do_break_action(allow_break, block_sight, block)
+
             ## We also may want a flag of sorts here that determines if the action is a
             ## movement or not, since the
 
@@ -496,47 +490,55 @@ if __name__ == '__main__':
                 action_list = Steve.x_return
 
         else:
-                # Sending the next commend from the action list -- found using the Dijkstra algo.
-                if action_index >= len(action_list):
-                    print("Error:", "out of actions, but mission has not ended!")
-                    time.sleep(2)
+            # Sending the next commend from the action list -- found using the Dijkstra algo.
+            if action_index >= len(action_list):
+                print("Error:", "out of actions, but mission has not ended!")
 
-                else:
+                time.sleep(2)
+                action_index = 0
+                action_list = Steve.get_shortest_path(world_state, block)
 
-                    ## If the agent is not yet on it's return journey, any movement it takes is
-                    ## used to update the return path
-                    if Steve.reverse == False:
-                        Steve.update_return_path((action_list[action_index]))
-                        
+                if len(action_list) != 0:
+                    print("Haha, jk, I'm getting another block")
 
-                    ## We may want code that deals with any obstacles in the agent's way as well,
-                    ## Since it's possible that the return path gets blocked
-                    ## I also want to update the dijkstra's algorithm to avoid obstacles, but that's getting
-                    ## too invested in Dijkstra's when we will be replacing it with a search eventually.
+                Steve.x_return = []
+                Steve.y_return = []
+                Steve.reverse = False
 
-                    if action_list[action_index] == "moveeast 1":
-                        Steve.x_pos += 1
-                    elif action_list[action_index] == "movewest 1":
-                        Steve.x_pos -= 1
-                    elif action_list[action_index] == "movesouth 1":
-                        Steve.y_pos += 1
-                    elif action_list[action_index] == "movenorth 1":
-                        Steve.y_pos -= 1
+            else:
 
-                    #print("x_pos: ", Steve.x_pos)
-                    #print("y_pos: ", Steve.y_pos)
-                    print("sending command")
-                    Steve.agent_host.sendCommand(action_list[action_index])
+                ## If the agent is not yet on it's return journey, any movement it takes is
+                ## used to update the return path
+                if Steve.reverse == False:
+                    Steve.update_return_path((action_list[action_index]))
 
-                action_index += 1
-                
-                
-                if len(action_list) == action_index:
-                    # Need to wait few seconds to let the world state realise I'm in end block.
-                    # Another option could be just to add no move actions -- I thought sleep is more elegant.
-                    time.sleep(2)
+                ## We may want code that deals with any obstacles in the agent's way as well,
+                ## Since it's possible that the return path gets blocked
+                ## I also want to update the dijkstra's algorithm to avoid obstacles, but that's getting
+                ## too invested in Dijkstra's when we will be replacing it with a search eventually.
 
-                world_state = Steve.agent_host.getWorldState()
-                
-                for error in world_state.errors:
-                    print("Error:",error.text)
+                if action_list[action_index] == "moveeast 1":
+                    Steve.x_pos += 1
+                elif action_list[action_index] == "movewest 1":
+                    Steve.x_pos -= 1
+                elif action_list[action_index] == "movesouth 1":
+                    Steve.y_pos += 1
+                elif action_list[action_index] == "movenorth 1":
+                    Steve.y_pos -= 1
+
+                # print("x_pos: ", Steve.x_pos)
+                # print("y_pos: ", Steve.y_pos)
+                print("sending command")
+                Steve.agent_host.sendCommand(action_list[action_index])
+
+            action_index += 1
+
+            if len(action_list) == action_index:
+                # Need to wait few seconds to let the world state realise I'm in end block.
+                # Another option could be just to add no move actions -- I thought sleep is more elegant.
+                time.sleep(2)
+
+            world_state = Steve.agent_host.getWorldState()
+
+            for error in world_state.errors:
+                print("Error:", error.text)
