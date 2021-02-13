@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Status
-driveId: 1m36ikc72ETu3XMzEmuN3-IHNOu2gZTHv
 youtubeId: 5goJvONQvdg
 ---
 
@@ -10,7 +9,10 @@ For our project in Minecraft AI, we will be focusing on navigation and automatio
 
 #### Take a look at our Project Video below
 {% include youtubePlayer.html id=page.youtubeId %}
-[![Image_presentation](https://user-images.githubusercontent.com/43485198/107839513-4c0b5b00-6d61-11eb-8c12-af1234b17ddc.png)](https://youtu.be/5goJvONQvdg)
+{% comment %} 
+    [![Image_presentation](https://user-images.githubusercontent.com/43485198/107839513-4c0b5b00-6d61-11eb-8c12-af1234b17ddc.png)](https://youtu.be/5goJvONQvdg)
+{% endcomment %}
+
 
 
 ## Approach
