@@ -3,40 +3,50 @@ layout: default
 title: Status
 ---
 
-Copied and pasted from the doc for easy reference:
+## Project Summary
+For our project in Minecraft AI, we will be focusing on navigation and automation of menial tasks in Minecraft in order to make the game more streamlined and less repetitive. The main goal of this project is to allow the agent to be given a user crafting recipe, and the agent will automatically move around and seek out the materials needed to craft it and gather them accordingly. For a more improved version of the agent, a more complex map with obstacles/natural elements specific to the terrain will be used as the agent will have to not only navigate to the resources but also avoid different obstacles and natural structures in the way while also being efficient about time.  It can also be used in order to just gather materials defined by the user. For example, before a large building project, the user can simply tell it to collect wood or cobblestone, and start the AI.
 
-- Project Summary: Since things may have changed since proposal (even if they haven’t), write a short paragraph summarizing the goals of the project (updated/improved version from the proposal).
-- Approach: Give a detailed description of your approach, in a few paragraphs. You should summarize the main algorithm you are using, such as by writing out the update equation (even if it is off-the-shelf). You should also give details about the approach as it applies to your scenario. For example, if you are using reinforcement learning for a given scenario, describe the setup in some detail, i.e. how many states/actions you have, what does the reward function look like. A good guideline is to incorporate sufficient details so that most of your approach is reproducible by a reader. I encourage you to use figures for this, as appropriate, as we used in the writeups for the assignments. I recommend at least 2-3 paragraphs.
-- Evaluation: An important aspect of your project, as we mentioned in the beginning, is evaluating your project. Be clear and precise about describing the evaluation setup, for both quantitative and qualitative results. Present the results to convince the reader that you have a working implementation. Use plots, charts, tables, screenshots, figures, etc. as needed. I expect you will need at least a 1-2 paragraphs to describe each type of evaluation that you perform.
-- Remaining Goals and Challenges: In a few paragraphs, describe your goals for the next 4-5 weeks, when the final report is due. At the very least, describe how you consider your prototype to be limited, and what you want to add to make it a complete contribution. Note that if you think your algorithm is quite good, but have not performed sufficient evaluation, doing them can also be a reasonable goal. Similarly, you may propose some baselines (such as a hand-coded policy) that you did not get a chance to implement, but want to compare against for the final submission. Finally, given your experience so far, describe some of the challenges you anticipate facing by the time your final report is due, how crippling you think it might be, and what you might do to solve them.
-- Resources Used: Mention all the resources that you found useful in writing your implementation. This should include everything like code documentation, AI/ML libraries, source code that you used,  StackOverflow, etc. You do not have to be comprehensive, but it is important to report the ones that are crucial to your project. I would like to know these so that the more useful ones can be shared with others in the course.
+*INCLUDE VIDEO*
+
+## Approach
+Our approach to the problem is divided into multiple parts with each part having a unique problem for the agent to tackle.
+
+#### Locating
+
+#### Navigating
+For navigating and pathfinding once the resources are located in the map, we are using a version of the famous Dijkstra's pathfinding algorithm. The Dijkstra's algorithm gives the agent a shortest path between it's current location and the location of the item type needed.
+
+Dijkstra's shortest path for the agent: 
+*Explain depth with code if  possible*
+
+![Dijkstras_progress_animation](https://user-images.githubusercontent.com/43485198/107836543-6853cb80-6d52-11eb-81de-d6ad897d4cd8.gif)
+
+[Source: WikiPedia](https://en.wikipedia.org/wiki/File:Dijkstras_progress_animation.gif)
+
+Once the shortest path is identified, a path is generated which is then converted into commands which make the agent move towards the block type. Once reached, the block will be attacked until broken, once the item is collected, the shortest path using the same algorithm is found between the agent and the next closest block type needed. This process is repeated until all the required blocks are collected.
+
+#### Recipe Formulation and Crafting
+
+## Evaluation
+#### Metrics:
+Time spent on task: The time spent should be minimized. The AI can be considered successful if it approaches or is better than the time spent by an average human on the same task.  
+
+#### Distance travelled: 
+The amount of distance traveled by the agent should also be minimized. This can be compared to the amount of distance traveled by a human player who has not plotted out their exact path, unlike the AI.
+
+#### Accuracy: 
+The measure of how close the AI is to completing the task. If all necessary materials are not available, it will be judged on how close it was to accomplishing the task, i.e. finishing all the other subtasks.  
+
+#### Baseline:
+The baseline for both metrics will be the time and distance spent by an average user. If the AI is within 150% the standard baseline, it can be regarded as successful. 
+
+## Remaining Goals and Challenges:
+The main goal that remains is to improve the pathfinding algorithm and compare results to see which is the best performing algorithm with time being the evaluating factor. We may use a version of the A* search to do that while also using a bayesian/markov chain implementation for parameters to the A* search. Adding weights to the required elements for determining the order of their acquisition would also help reducing the time for decision making during the navigation process. 
+The current model being a discrete model is restricted in movements, to improve on that, a better model with a continouous momvement pattern is to be added as well. Crafting elements is achieved as required, the remaining goal for that is for the user to input the item needed and the agent recognizes which available elements are needed from the current terrain/world, then subsequently retrieve them and craft the item.
+A challenge we expect to face is to build an algorithm that can irrespective of the world the agent is deployed in, can navigate around obstacles/natural elements present in the world without breaking or compromising on efficiency.
 
 
+--- DELETE LATER
 My preliminary content:
 - Project_summary: rip and update from proposal (possibly the same one from index.md)
 - Approach: rip from proposal also, but also add in the backtracking, and what exactly our plans are for agent updates (should probably use off-the-shelf or something basic like gradient descent, and this would liekly apply to the bayesian parameter of the search e.g. stone here means x, y, z probabilities of wood, water, sand nearby. The weights to be updated would be the probabilities in this case.)
-- Evaluation: rip from proposal; we're using time estimates largely, since there's not really a score otherwise; if the agent is working properly, it will always get the items (if available) and always craft the request (if possible). Since we need to convince of a working demo, once we get the simple Dijkstra's demo down, we can time it on different scenarios and go from there.
-- Remaining goals: well, everything that isn't implemented by the time this is written, really. Off the top of my head: A* for the search (instead of dijkstra), bayesian/markov chain for parameters to A* (effectively the inverse costs for the search), and then the weights themselves for the bayesian. We may also want weights for determining item acquisition order (probably fastest to do as many as nearby at a time; e.g. when looking for wood, and finding a tree, if we need more than one wood, just deforest the whole area instead of moving on to another material) **Added since the original: Is discrete right now, but will be planned to be continuous for the final**
-- Do we have any so far? I would guess we will need a guide/resource to implement gradient descent, A* is common enough that we won't need to, might need a resource for bayesian/markov. Probably wouldn't cite the Malmo docs either.
-
-We also need a video with:
-- brief description (with media): should be relatively straightforward
-- example capture: probably a run of our demo version with full observability
-- can include summary to pad time if so desired, but there's a 3 min cap, so maybe not.
-- essentially the video is a summary of the status doc (above), with a video of a demo and some pictures/screenshots.
-
-
-
-
-
-
-
-Project Summary
-The purpose of our project is to develop an AI that can automate and optimize the process of crafting particular items. Given a specific input, the AI will recognize the ingredients it needs and will find the optimal path to it, using observation and search algorithms. Once this has been accomplished, we will also implement a memory feature that will allow it to remember where previously irrelevent items were observed when on a previous mission.
-
-Approach
-To create this AI, we split the project into 3 main tasks. The first is to recognize the input and develop a way to create complex items out of basic materials. To do this, we need to create an algorithm that could recursively recognize the ingredients and quantities of materials required to create the item. The second major task was observation and search algorithms. We need a way for the AI to learn and improve upon its search tactics as it tries to find the correct materials. To do so, we implement several path finding methods, like Dijkstra's Algorithm and A*. The final aspect is world generation. The AI needs an appropriate training ground. To do this, we have to create an area that will teach the AI patterns it can later use.
-
-Evaluation
-
-Remaining Goals and Challenges
