@@ -26,7 +26,7 @@ As the basic functions of the agent are confirmed and solidified, the observatio
 
 
 #### Navigating
-Dijkstra's shortest path Algorithm is currently used as our method of navigation once we have determined the location of the object we are looking for. As it stands currently, we use Dijkstra's algorithm to find the path between the agent's current location and some material location in two dimensions, while we have a stack implemented to keep reccord of the current shortest path back. As the environment get more complex, Dijkstra's will also be used to find the return path from the agent's current location to the starting position.
+Dijkstra's shortest path Algorithm is currently used as our method of navigation once we have determined the location of the object we are looking for. As it stands currently, we use Dijkstra's algorithm to find the path between the agent's current location and some material location in two dimensions, while we have a stack implemented to keep reccord of the current shortest path back. As the environment get more complex, Dijkstra's will also be used to find the return path from the agent's current location to the starting position in coordination with the general path from the stack (since the farther we go, we will eventually be out of observation range of the starting point).
 
 
 Dijkstra's shortest path for the agent: 
@@ -72,6 +72,25 @@ The baseline for both metrics will be the time and distance spent by an average 
 
 
 ## Remaining Goals and Challenges:
-The main goal that remains is to improve the pathfinding algorithm and compare results to see which is the best performing algorithm with time being the evaluating factor. We may use a version of the A* search to do that while also using a bayesian/markov chain implementation for parameters to the A* search. Adding weights to the required elements for determining the order of their acquisition would also help reducing the time for decision making during the navigation process. 
-The current model being a discrete model is restricted in movements, to improve on that, a better model with a continouous momvement pattern is to be added as well. Crafting elements is achieved as required, the remaining goal for that is for the user to input the item needed and the agent recognizes which available elements are needed from the current terrain/world, then subsequently retrieve them and craft the item.
+The main goal that remains is to improve the pathfinding algorithm and compare results to see which is the best performing algorithm with time being the evaluating factor. We are currently planning on using A* in addition to the spiral search detailed above, as well as using some sort of learning algorithm to determine and update the weights (examples and current candidates include a bayesian or markov model to represent the probabilities or likelihoods of various materials given an environment). The A* algorithm is similar to Dijkstra's Algorithm, except rather than only having a destination with the goal of minimum cost, we can use a heuristic function to take probabilities or likelihoods from, say, a markov model, and use the inverse probabilities of material presence as a cost. In this way, as long as we have a proper heuristic function, we can (relatively) quickly find prospective areas to travel to based on their learned material content. 
+
+The gif below is in the same situation and style of that of the Dijkstra's Algorithm one above, but shows A* instead. The situation shown is not quite how we will be using it; we won't be looking for the best path to a single location, but instead we have some "idealized" location, and we want to find which of the paths has the closest relation to the end state (if not the end state itself). An example might be that the agent believes that a grassy area often borders a stone area, which in turn tends to border a desert area. Say additionally that the agent "knows" that logs are only found in a desert area. Then when we run A* with the intent to find logs, we are effectively searching for a desert environment. If the area we start in is all diamond ore, and there are bordering areas of grass and stone on either side, the agent would not find desert directly, but would guess that since stone often accompanies desert, whereas grass may accomany stone which may lead to desert, the best bet for closest results is to travel to the stone area. This is a large generalization, but that's the idea.
+
+[Source: WikiPedia](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif)
+
+Regarding the heuristic function, we would have a set up similar to the following:
+
+- we have a model for probabilities/likelihoods that describes how likely a material is to be present in a given environment (whether at the borders of an observation, a certain grid size, etc.)
+- we have an the spiral search as defined earlier to check if there are any materials present in the observation area
+- if nothing is in the area, we use an A* search over environments at the edge of the agent's observation
+    - in this A* search, the costs of the heuristic funtion will be the inverses of the probabilities/likelihoods, which would mean that environments with a high probability of containing the materials we're interested in have low cost (and higher priority), while environments that contain no materials we desire have an infinite cost (and if they have low lieklihoods themselves, we'd prefer those environments that often border other environments with high likelihoods)
+
+The above will also be how we train the agent, by having it learn the types of environments that are likely to contain various materials, and refining the likelihood values for a given environment.
+
+We may also add weights to the required materials themselves as a set of trainable parameters to allow the possibility of different acquisition orders, which may also help reduce the time for the overall journey.
+
+As mentioned above under navigation, we also plan to implement 3D navigation, as well as having a joint combination of Dijkstra's Algorithm and the currently implemented return stack perform the calculation for a return path as well.
+
+The current model being a discrete model is restricted in movements, to improve on that and better perform in a "real" Minecraft world, we plan to implement continuous momvement  as well. Crafting elements is achieved as required, the remaining goal for that is for the user to input the item needed and the agent recognizes which available elements are needed from the current terrain/world, then subsequently retrieve them and craft the item.
+
 A challenge we expect to face is to build an algorithm that can irrespective of the world the agent is deployed in, can navigate around obstacles/natural elements present in the world without breaking or compromising on efficiency.
