@@ -7,7 +7,7 @@ driveId: 1m36ikc72ETu3XMzEmuN3-IHNOu2gZTHv
 ## Project Summary
 For our project in Minecraft AI, we will be focusing on navigation and automation of menial tasks in Minecraft in order to make the game more streamlined and less repetitive. The main goal of this project is to allow the agent to be given a user crafting recipe, and the agent will automatically move around and seek out the materials needed to craft it and gather them accordingly. For a more improved version of the agent, a more complex map with obstacles/natural elements specific to the terrain will be used as the agent will have to not only navigate to the resources but also avoid different obstacles and natural structures in the way while also being efficient about time.  It can also be used in order to just gather materials defined by the user. For example, before a large building project, the user can simply tell it to collect wood or cobblestone, and start the AI.
 
-*INCLUDE VIDEO*
+[Take a look at our project video here](https://youtu.be/5goJvONQvdg)
 {% include googleDrivePlayer.html id=page.driveId %}
 <iframe width="560" height="315" src="https://www.youtube.com/embed/F0Qo5i4vx0o" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
