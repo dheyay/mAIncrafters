@@ -9,6 +9,7 @@ For our project in Minecraft AI, we will be focusing on navigation and automatio
 
 *INCLUDE VIDEO*
 {% include googleDrivePlayer.html id=page.driveId %}
+<iframe width="560" height="315" src="https://www.youtube.com/embed/F0Qo5i4vx0o" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Approach
 Our approach to the problem is divided into multiple parts with each part having a unique problem for the agent to tackle.
