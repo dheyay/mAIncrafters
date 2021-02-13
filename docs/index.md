@@ -11,7 +11,7 @@ Our project enables our agent, Steve, to find resources on the user-generated te
 Some project specific screenshots here - current world if possible
 
 ### Our plan going ahead
-We have planned on adding more complexity to this by adding obstacles to improve navigation, an improvement in time/movement efficiency for charting the course and retreiving all items needed by the agent. 
+We have planned on using different search/pathfinding algorithms (e.g A*) and adding more complexity to the map by adding obstacles to improve navigation, an improvement in time/movement efficiency for charting the course as the agent learns from previous runs to retreive all resources and craft the item needed by the agent. 
 
 [Find our source code for the agent here](https://github.com/dheyay/mAIncrafters)
 
