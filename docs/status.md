@@ -76,7 +76,7 @@ The main goal that remains is to improve the pathfinding algorithm and compare r
 
 The gif below is in the same situation and style of that of the Dijkstra's Algorithm one above, but shows A* instead. The situation shown is not quite how we will be using it; we won't be looking for the best path to a single location, but instead we have some "idealized" location, and we want to find which of the paths has the closest relation to the end state (if not the end state itself). An example might be that the agent believes that a grassy area often borders a stone area, which in turn tends to border a desert area. Say additionally that the agent "knows" that logs are only found in a desert area. Then when we run A* with the intent to find logs, we are effectively searching for a desert environment. If the area we start in is all diamond ore, and there are bordering areas of grass and stone on either side, the agent would not find desert directly, but would guess that since stone often accompanies desert, whereas grass may accomany stone which may lead to desert, the best bet for closest results is to travel to the stone area. This is a large generalization, but that's the idea.
 
-![Astar_progress_animation](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif)
+![Astar_progress_animation](https://upload.wikimedia.org/wikipedia/commons/5/5d/Astar_progress_animation.gif)
 [Source: WikiPedia](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif)
 
 Regarding the heuristic function, we would have a set up similar to the following:
