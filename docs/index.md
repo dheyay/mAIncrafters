@@ -3,7 +3,7 @@ layout: default
 title:  Home
 ---
 
-![stage 1](https://user-images.githubusercontent.com/43485198/104982350-54b97d00-59bf-11eb-9def-fabe6ba4c577.png)
+![maincrafters](https://user-images.githubusercontent.com/43485198/107835889-e367b280-6d4f-11eb-8a03-7c4dcf99a6b0.png)
 
 ### What the mAIncrafters are doing?
 Our project enables our agent, Steve, to find resources on the user-generated terrain (currently flat), locate these resources present and chart a path to them for the user. Once Steve has found the items/resources available on the map that are needed, he navigates to these objects one by one and mines them, collects them. He continues this until there are no more objects to mine, then returns home to craft a new item from the retrieved resources. The item to be crafted can be specified by the user depending on the resources available in the given map area.
