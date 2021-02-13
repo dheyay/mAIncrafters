@@ -14,18 +14,30 @@ For our project in Minecraft AI, we will be focusing on navigation and automatio
 Our approach to the problem is divided into multiple parts with each part having a unique problem for the agent to tackle.
 
 #### Locating
+For locating objects, the current version of the agent uses a spiral search though the observation level that is in the same plane as the agent (at this point in time, the agent has an observation grid equivalent in size to the world). The way it works is to iterate in a direction along the grid until it hits a "corner" spcace in the grid, then changes direction [Source: StackOverflow](https://stackoverflow.com/questions/398299/looping-in-a-spiral). This allows us to find the closest location with a material of interest, at which point the agent determines the shortest path there (using Dijkstra's algorithm, then goes to collect the material. After this material is collected, this is repeated, checking for the closest material to the current location. If nothing is found nearby, it currently returns to the starting point, and effectively restarts the search from there. This allows the agent to avoid missing any blocks that end up outside of the observation window after moving in a given direction.
+
+As the basic functions of the agent are confirmed and solidified, the observation window will be reduced to better mimic a player's view. As a result of this restriction, it will be entirely possible that no desired materials are observable from the starting point of the agent, and this is where the AI will come into play. More details will be in the Remaining Goals and Challenges section, but the short version is that we will be training the agent to associate various world characteristics and landscapes with materials, and have the agent move towards regions that are likely to contain the object in its searches.
 
 #### Navigating
-For navigating and pathfinding once the resources are located in the map, we are using a version of the famous Dijkstra's pathfinding algorithm. The Dijkstra's algorithm gives the agent a shortest path between it's current location and the location of the item type needed.
+Dijkstra's shortest path Algorithm is currently used as our method of navigation once we have determined the location of the object we are looking for. As it stands currently, we use Dijkstra's algorithm to find the path between the agent's current location and some material location in two dimensions, while we have a stack implemented to keep reccord of the current shortest path back. As the environment get more complex, Dijkstra's will also be used to find the return path from the agent's current location to the starting position.
 
 Dijkstra's shortest path for the agent: 
-*Explain depth with code if  possible*
+The way we are using Dijkstra's Algorithm in are project is as follows:
+- set the starting location and destination, and have a current space used to keep track of position, which starts at the starting location
+-- the cost to travel to the starting location is 0, and the cost for every other space defaults to infinity
+- iterate over the spaces that are adjacent to the current space
+-- if the cost of travelling to that space is greater than 1 + the cost to the current space, then the next space's cost is set to (1 + cost of current space), and it's previous space is set to the current space.
+- this repeats, updating the current space as it calculates, and finally results in a mapping of (space_loaction) -> (cost, previous_space) for all relevant spaces
+- starting from the destination space, we then get the path by recording the the previous spaces of each space in the path until we reach the starting location
+- finally, the actions necessary for the agent to travel that path are extracted
+
+In the current version of the agent, once the path is found and the agent moves to the location, the material in question is collected (if the material is a block, the agent breaks the block, then collects), and the location algorithm then Dijkstra's Algorithm are run in succession repeatedly until no nearby blocks are found, at which point the agent returns to the starting position.
+
+In the gif below, there is a visualization of Dijkstra's algorithm being used to find a path while an obstacle is in the way. This will be quite relevant to our agent, since when generating paths, there will be choices to either consider a block as an obstacle blocking us or something that is climbable (for a 3D implementation of Dijkstra's Algorithm), and even if climbable, if there is still a route to the destination beyond it.
 
 ![Dijkstras_progress_animation](https://user-images.githubusercontent.com/43485198/107836543-6853cb80-6d52-11eb-81de-d6ad897d4cd8.gif)
 
 [Source: WikiPedia](https://en.wikipedia.org/wiki/File:Dijkstras_progress_animation.gif)
-
-Once the shortest path is identified, a path is generated which is then converted into commands which make the agent move towards the block type. Once reached, the block will be attacked until broken, once the item is collected, the shortest path using the same algorithm is found between the agent and the next closest block type needed. This process is repeated until all the required blocks are collected.
 
 #### Recipe Formulation and Crafting
 
