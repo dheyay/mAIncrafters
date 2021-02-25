@@ -197,6 +197,7 @@ class SteverCrafter():
                 </Mission>'''
 
     def load_grid(self, world_state):
+        grid = []
         while world_state.is_mission_running:
             # sys.stdout.write(".")
             time.sleep(0.1)
@@ -352,8 +353,7 @@ class SteverCrafter():
                     # print("location: ", x, y)
                     # print("block at location: ", grid_obs[4*(self.obs_size**2) + self.obs_size * 2 * (y + 50) + x + 50])
                     # print("destination_block: ", destination_block)
-                    if grid_obs[(((2 * self.obs_size) + 1) ** 2) + (self.obs_size * 2 + 1) * (
-                            50 + y) + 50 + x] == destination_block:
+                    if grid_obs[(((2 * self.obs_size) + 1) ** 2) + (self.obs_size * 2 + 1) * (50 + y) + 50 + x] == destination_block:
                         return x, y
                 if x == y or (x < 0 and x == -y) or (x > 0 and x == 1 - y):
                     dx, dy = -dy, dx
@@ -452,12 +452,26 @@ if __name__ == '__main__':
 
     block = "log"
 
+    ##For future use:
+    valid_materials = ["log", "stone", "diamond_ore"]
+    current_paths = []
+    for material in valid_materials:
+        temp_list = Steve.get_shortest_path(world_state, material)
+        if temp_list != []:
+            current_paths.append(temp_list)
+
+    #print(current_paths)
+
+
     action_index = 0
     ## At this point, we'll need to have determined what our destination is.
     ## Air is the default that will just send it to the default destination,
     ## but if a block is generated in the world and that type is specified,
     ## can use that instead and it will get the path to that block
-    action_list = Steve.get_shortest_path(world_state, "log")
+
+    # action_list = Steve.get_shortest_path(world_state, "log")
+    action_list = min(current_paths, key = lambda x: len(x))
+
     # print(action_list)
     temp = 1
 
