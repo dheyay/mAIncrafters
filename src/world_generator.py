@@ -26,6 +26,8 @@ import sys
 import time
 import json
 
+import random
+
 ## temporary until reimplementation of dijkstra's
 from priority_dict import priorityDictionary
 ##
@@ -45,6 +47,9 @@ class SteverCrafter():
         # World size
         self.size = 50
         self.obs_size = 50
+
+        # Obstacles and material densities
+        self.obstacle_density = 0.1
 
         # Malmo Parameters
         self.agent_host = MalmoPython.AgentHost()
@@ -97,6 +102,9 @@ class SteverCrafter():
         # Return Stacks:
         self.x_return = []
         self.y_return = []
+        self.x_return_index = 0
+        self.y_return_index = 0
+        self.is_x_return = True
 
     def init_malmo(self):
         """
@@ -132,6 +140,12 @@ class SteverCrafter():
         return world_state
 
     def GetMissionXML(self):
+        obstacles = []
+        for i in range(-self.size, self.size):
+            for j in range(-self.size, self.size):
+                if random.random() < self.obstacle_density:
+                    obstacles.append((i, j))
+
         return '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
                 <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                   <About>
@@ -152,6 +166,7 @@ class SteverCrafter():
                "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(self.size, self.size, self.size, -self.size) + \
                "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(-self.size, self.size, -self.size, -self.size) + \
                "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(-self.size, -self.size, -self.size, self.size) + \
+               ''.join(["<DrawBlock x='{}' y='64' z='{}' type='wool'/>".format(x[0], x[1]) for x in obstacles]) + \
                "<DrawBlock x='{}' y='64' z='{}' type='log' />".format(randint(-self.size, self.size), randint(-self.size, self.size)) + \
                "<DrawBlock x='{}' y='64' z='{}' type='log' />".format(randint(-self.size, self.size), randint(-self.size, self.size)) + \
                '''
@@ -252,19 +267,21 @@ class SteverCrafter():
             except StopIteration:
                 break
 
-            if current_space + (self.obs_size * 2 + 1) < len(grid_obs) and \
+            if current_space + (self.obs_size * 2 + 1) < len(grid_obs)//2 and \
                     current_best_length[current_space][0] + 1 < \
                     current_best_length[current_space + (self.obs_size * 2 + 1)][0] and \
                     grid_obs[current_space + (self.obs_size * 2 + 1)] != "air" and \
+                    grid_obs[current_space + (((2 * self.obs_size) + 1) ** 2) + (self.obs_size * 2 + 1)] != "wool" and \
                     current_space != current_best_length[current_space + (self.obs_size * 2 + 1)][1]:
                 current_best_length[current_space + (self.obs_size * 2 + 1)] = (
                     current_best_length[current_space][0] + 1, current_space)
                 prio_dict[current_space + (self.obs_size * 2 + 1)] = \
                     current_best_length[current_space + (self.obs_size * 2 + 1)][0]
 
-            if current_space + 1 < len(grid_obs) and \
+            if current_space + 1 < len(grid_obs)//2 and \
                     current_best_length[current_space][0] + 1 < current_best_length[current_space + 1][0] and \
                     grid_obs[current_space + 1] != "air" and \
+                    grid_obs[current_space + (((2 * self.obs_size) + 1) ** 2) + 1] != "wool" and \
                     current_space != current_best_length[current_space + 1][1]:
                 current_best_length[current_space + 1] = (current_best_length[current_space][0] + 1, current_space)
                 prio_dict[current_space + 1] = current_best_length[current_space + 1][0]
@@ -272,15 +289,16 @@ class SteverCrafter():
             if current_space - 1 >= 0 and \
                     current_best_length[current_space][0] + 1 < current_best_length[current_space - 1][0] and \
                     grid_obs[current_space - 1] != "air" and \
+                    grid_obs[current_space + (((2 * self.obs_size) + 1) ** 2) - 1] != "wool" and \
                     current_space != current_best_length[current_space - 1][1]:
                 current_best_length[current_space - 1] = (current_best_length[current_space][0] + 1, current_space)
                 prio_dict[current_space - 1] = current_best_length[current_space - 1][0]
 
             if current_space - (self.obs_size * 2 + 1) >= 0 and \
                     current_best_length[current_space][0] + 1 < \
-                    current_best_length[current_space - (self.obs_size * 2 + 1)][
-                        0] and \
+                    current_best_length[current_space - (self.obs_size * 2 + 1)][0] and \
                     grid_obs[current_space - (self.obs_size * 2 + 1)] != "air" and \
+                    grid_obs[current_space + (((2 * self.obs_size) + 1) ** 2) - (self.obs_size * 2 + 1)] != "wool" and \
                     current_space != current_best_length[current_space - (self.obs_size * 2 + 1)][1]:
                 current_best_length[current_space - (self.obs_size * 2 + 1)] = (
                     current_best_length[current_space][0] + 1, current_space)
@@ -350,12 +368,14 @@ class SteverCrafter():
         # print(grid)
 
         if (destination_block == "air"):
-            destination_index = (self.obs_size * 2 + 1) * (self.y_dest + 50) + self.x_dest + 50
+            destination_index = (self.obs_size * 2 + 1) * (50 - self.y_pos) + 50 - self.x_pos
+            self.true_x_dest = 0
+            self.true_y_dest = 0
 
         else:
             results = self.find_destination(grid, destination_block)
 
-            # print("Results: ", results)
+            print("Results: ", results)
 
             if results == None:
                 self.reverse = True
@@ -478,14 +498,17 @@ if __name__ == '__main__':
             ## Just find the next diamond_ore:
             action_index = 0
             action_list = Steve.get_shortest_path(world_state, block)
+            print("reverse: ", Steve.reverse)
             print("Finding new block: ", action_list)
             time.sleep(1)
 
             ## if there are no diamond ore in the observation view, Steve.reverse will be
             ## set to true, and action_list will be empty
             if Steve.reverse == True:
-                Steve.x_return.extend(Steve.y_return)
-                action_list = Steve.x_return
+                ##Steve.x_return.extend(Steve.y_return)
+                ##action_list = Steve.x_return
+                action_list = Steve.get_shortest_path(world_state, "air")
+                #Steve.is_x_return = True
 
         else:
             # Sending the next commend from the action list -- found using the Dijkstra algo.
@@ -493,27 +516,40 @@ if __name__ == '__main__':
                 print("Error:", "out of actions, but mission has not ended!")
 
                 time.sleep(2)
-                action_index = 0
+                action_index = -1
                 action_list = Steve.get_shortest_path(world_state, block)
+                #print("true x_dest:", Steve.true_x_dest)
+                #print("true y dest:", Steve.true_y_dest)
+                print(Steve.agent_near_dest())
 
-                if len(action_list) != 0:
+                if action_list != []:
                     print("Haha, jk, I'm getting another block")
+                    Steve.reverse = False
 
-                Steve.x_return = []
-                Steve.y_return = []
-                Steve.reverse = False
+
 
             else:
 
                 ## If the agent is not yet on it's return journey, any movement it takes is
                 ## used to update the return path
-                if Steve.reverse == False:
-                    Steve.update_return_path((action_list[action_index]))
+                #if Steve.reverse == False:
+                    #Steve.update_return_path((action_list[action_index]))
 
                 ## We may want code that deals with any obstacles in the agent's way as well,
                 ## Since it's possible that the return path gets blocked
                 ## I also want to update the dijkstra's algorithm to avoid obstacles, but that's getting
                 ## too invested in Dijkstra's when we will be replacing it with a search eventually.
+                #if Steve.open_direction(action_list[action_index]) == False:
+                #    if Steve.is_x_return:
+                #        Steve.is_x_return = False
+                #        Steve.x_return_index = action_index
+                #        action_index = Steve.y_return_index
+                #    else:
+                #        Steve.is_x_return = True
+                #        Steve.y_return_index = action_index
+                #        action_index = Steve.x_return_index
+
+
 
                 if action_list[action_index] == "moveeast 1":
                     Steve.x_pos += 1
@@ -524,17 +560,17 @@ if __name__ == '__main__':
                 elif action_list[action_index] == "movenorth 1":
                     Steve.y_pos -= 1
 
-                # print("x_pos: ", Steve.x_pos)
-                # print("y_pos: ", Steve.y_pos)
-                print("sending command")
+                print("x_pos: ", Steve.x_pos)
+                print("y_pos: ", Steve.y_pos)
+                print("sending command: ", action_list[action_index])
                 Steve.agent_host.sendCommand(action_list[action_index])
 
             action_index += 1
 
-            if len(action_list) == action_index:
+            #if len(action_list) == action_index:
                 # Need to wait few seconds to let the world state realise I'm in end block.
                 # Another option could be just to add no move actions -- I thought sleep is more elegant.
-                time.sleep(2)
+            #    time.sleep(2)
 
             world_state = Steve.agent_host.getWorldState()
 
