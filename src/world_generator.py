@@ -152,10 +152,8 @@ class SteverCrafter():
                "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(self.size, self.size, self.size, -self.size) + \
                "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(-self.size, self.size, -self.size, -self.size) + \
                "<DrawLine x1='{}' x2='{}' y1='64' y2='64' z1='{}' z2='{}' type='fence'/>".format(-self.size, -self.size, -self.size, self.size) + \
-               "<DrawBlock x='{}' y='64' z='{}' type='log' />".format(randint(-self.size, self.size),
-                                                                      randint(-self.size, self.size)) + \
-               "<DrawBlock x='{}' y='64' z='{}' type='log' />".format(randint(-self.size, self.size),
-                                                                      randint(-self.size, self.size)) + \
+               "<DrawBlock x='{}' y='64' z='{}' type='log' />".format(randint(-self.size, self.size), randint(-self.size, self.size)) + \
+               "<DrawBlock x='{}' y='64' z='{}' type='log' />".format(randint(-self.size, self.size), randint(-self.size, self.size)) + \
                '''
           </DrawingDecorator>
           <ServerQuitWhenAnyAgentFinishes/>
