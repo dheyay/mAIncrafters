@@ -39,7 +39,7 @@ def return_path(current_node, obs):
     return path[::-1]
 
 # Check if all blocks are walkable
-def get_neighbors(grid, n, obs,allow_diagonal = False):
+def get_neighbors(grid, n, obstacles, obs,allow_diagonal = False):
     offset = (2*obs + 1)**2
     index = (obs * 2 + 1) * (n.pos[1] + 50) + n.pos[0] + 50
     nd = None
@@ -53,7 +53,7 @@ def get_neighbors(grid, n, obs,allow_diagonal = False):
     
     filtered = []
     for i in nd:
-        if grid[i + offset] != 'wool':
+        if grid[i + offset] not in obstacles:
             filtered.append(i)
     
     n_coord = [get_coordinates_from_index(idx, obs) for idx in filtered]
@@ -73,7 +73,7 @@ def get_coordinates_from_index(index, obs_size):
 # --------------------------------------------------------------------------------------------
 # A-Star search function
 
-def AStar(grid, start, dest, obs_size, allow_diagonal_movement=False):
+def AStar(grid, start, dest, obs_size, obstacles, allow_diagonal_movement=False):
     """
     Parameters
     ----------
@@ -81,6 +81,7 @@ def AStar(grid, start, dest, obs_size, allow_diagonal_movement=False):
     start : int     ->  Index of grid that corresponds to the starting position
     dest : int      ->  Index of grid that corresponds to the destination
     obs_size : int  ->  Agents observational space
+    obstacles : [string] -> Contains a list of obstacles to avoid
     allow_diagonal_movement : bool, optional
                     -> The default is False. Set to true if diagonal movement
                         for agent is allowed
@@ -112,7 +113,7 @@ def AStar(grid, start, dest, obs_size, allow_diagonal_movement=False):
         
         closed_set.add(current.pos)
         
-        neighbors = get_neighbors(grid, current, obs_size, allow_diagonal_movement)
+        neighbors = get_neighbors(grid, current, obs_size, obstacles, allow_diagonal_movement)
         for i in range(0, len(neighbors)):
             neighbor = Node(None, neighbors[i])
             if neighbor.pos in closed_set:
