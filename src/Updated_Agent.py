@@ -48,8 +48,8 @@ class SteverCrafter():
 
     def __init__(self):
         # World size
-        self.size = 50
-        self.obs_size = 50
+        self.size = 100
+        self.obs_size = 100
 
         self.prob_matrix = dict()
         self.search = []
@@ -640,11 +640,11 @@ class SteverCrafter():
                     # print("block at location: ", grid_obs[4*(self.obs_size**2) + self.obs_size * 2 * (y + 50) + x + 50])
                     # print("destination_block: ", destination_block)
                     if single == False:
-                        if grid_obs[(((2 * self.obs_size) + 1) ** 2) + (self.obs_size * 2 + 1) * (50 + y) + 50 + x] in destination_block:
-                            self.current_block = grid_obs[(((2 * self.obs_size) + 1) ** 2) + (self.obs_size * 2 + 1) * (50 + y) + 50 + x]
+                        if grid_obs[(((2 * self.obs_size) + 1) ** 2) + (self.obs_size * 2 + 1) * (self.obs_size + y) + self.obs_size + x] in destination_block:
+                            self.current_block = grid_obs[(((2 * self.obs_size) + 1) ** 2) + (self.obs_size * 2 + 1) * (self.obs_size + y) + self.obs_size + x]
                             return x, y
                     else:
-                        if grid_obs[(((2 * self.obs_size) + 1) ** 2) + (self.obs_size * 2 + 1) * (50 + y) + 50 + x] == destination_block:
+                        if grid_obs[(((2 * self.obs_size) + 1) ** 2) + (self.obs_size * 2 + 1) * (self.obs_size + y) + self.obs_size + x] == destination_block:
                             return x, y
 
                 if x == y or (x < 0 and x == -y) or (x > 0 and x == 1 - y):
@@ -660,7 +660,7 @@ class SteverCrafter():
         grid = self.load_grid(world_state)
 
         if (destination_block == "air"):
-            destination_index = (self.obs_size * 2 + 1) * (50-self.y_pos) + 50-self.x_pos
+            destination_index = (self.obs_size * 2 + 1) * (self.obs_size-self.y_pos) + self.obs_size-self.x_pos
             self.true_x_dest = 0
             self.true_y_dest = 0
 
@@ -673,16 +673,16 @@ class SteverCrafter():
             else:
                 destination_x, destination_y = results[0], results[1]
 
-                destination_index = (self.obs_size * 2 + 1) * (destination_y + 50) + destination_x + 50
+                destination_index = (self.obs_size * 2 + 1) * (destination_y + self.obs_size) + destination_x + self.obs_size
                 self.true_x_dest = self.x_pos + destination_x
                 self.true_y_dest = self.y_pos + destination_y
 
-        current_location_index = (self.obs_size * 2 + 1) * 50 + 50
+        current_location_index = (self.obs_size * 2 + 1) * self.obs_size + self.obs_size
         # home_index = self.obs_size * 2 * (self.y_home + 50) + self.x_home + 50
         # destination_index = self.obs_size * 2 * (self.y_dest + 50) + self.x_dest + 50
 
         # shortest_path = self.dijkstra_shortest_path(grid, current_location_index, destination_index)
-        aStar_path = aStar.AStar(grid, current_location_index, destination_index, self.obs_size, ["cactus", "stone", "grass", "ice"])
+        aStar_path = aStar.AStar(grid, current_location_index, destination_index, self.obs_size)
         action_list = self.extract_action_list_from_path(aStar_path)
 
         return action_list
