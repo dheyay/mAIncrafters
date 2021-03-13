@@ -4,12 +4,12 @@ title: Final Report
 ---
 
 ## Project Summary
-Suppose you are playing Minecraft and as a regular miner in a world, you want to start a large building project but are not sure about everything you need for it. That is where our mAinCrafter comes in. Our agent focuses on automation of menial tasks in Minecraft to make the gameplay more streamlined and less repetitive for the player. The agent does the finding and mining so you can focus on desigining your latest masterpiece.
+Suppose you are playing Minecraft and as a regular miner in a world, you want to start a large building project but are not sure about everything you need for it. What if the items you need are tedious to make? What if you're more interested in the exploring aspect, but need items to progress? That is where our mAinCrafter comes in. Our agent focuses on automation of menial tasks in Minecraft to make the gameplay more streamlined and less repetitive for the player. The agent does the finding, mining, and crafting so you can focus on desigining your latest masterpiece.
 
 ADD IMAGE HERE
 
 The main goal of this project is to allow the user to give the agent items to craft and the agent will automatically move around and seek out the materials needed to craft it and acquire them. The agent will take into account the placing of the elements and if the item needed to be crafted has a sub-element that also needs crafting, it will find all the base elements needed and provide the user with the final element after crafting it. The agent will be able to find the elements in a large/complex map while avoiding obstacles and being efficient about time as well. It can also be used in order to gather materials stated by the user. 
-For example, before building a castle, the user can simply instruct the agent to gather wood or cobblestone.
+For example, before building a castle, the user can simply instruct the agent to gather wood or cobblestone, or if you need a complicated item like a piston, or an anvil, you can simply start the agent, and come back once the task is complete.
 
 #### ADD VIDEO 
 
@@ -62,28 +62,12 @@ Source: [Malmo By Microsoft](https://github.com/microsoft/malmo)
 add for new agent
 
 ##### Navigation
-Our agent uses the A* algorithm for navigating and shortest path finding. The A* search is a graph traversal algorithm used for its optimality, completeness and efficiency. Being an uninformed search it is formulated in terms of a weighted graph, which in the agent's case is the observable environment, starting from a specific node. The main aim is to find the path to the goal node with the shortest cost. It does this calculation by maintaining a tree of paths. 
-
-
-Our implementation of the A* uses a priority queue to perform the continuous selection of the estimated minimum cost nodes to select and expand. It does this selection based on the cost of the path and an estimate of the cost required to extend the path all the way to the goal. Specifically, A* selects the path that minimizes
-
-### f(n)=g(n)+h(n)
-
-where n is the next node on the path, g(n) is the cost of the path from the start node to n, and h(n) is a heuristic function that estimates the cost of the cheapest path from n to the goal. 
-
-A* terminates when the path it chooses to extend is a path from start to goal or if there are no paths eligible to be extended. The heuristic function we use is euclidean distance between two nodes. 
-
-
-d(p, q) = \sqrt{(q_1 - p_1)^2 + (q_2 - p_2)^2}
-
-Typical implementations of A* use a priority queue to perform the repeated selection of minimum (estimated) cost nodes to expand. This priority queue is known as the open set or fringe. At each step of the algorithm, the node with the lowest f(x) value is removed from the queue, the f and g values of its neighbors are updated accordingly, and these neighbors are added to the queue. The algorithm continues until a removed node (thus the node with the lowest f value out of all fringe nodes) is a goal node. The f value of that goal is then also the cost of the shortest path, since h at the goal is zero.
-
-![Astar_progress_animation](https://upload.wikimedia.org/wikipedia/commons/5/5d/Astar_progress_animation.gif)
-
-[Source: WikiPedia](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif)
+A* - add psuedo - hueristic equation
 
 ##### Crafting
-add for new agent
+Using the same method as in the baseline, we used the files from the Minecraft base code, and used it to extrapolate the recipes for all items in the game. We expand upon the crafting code implemented in the baseline, where we search the inventory, and craft the items we do not already have recursively. 
+Adding onto what we already have, we added a function to return the base materials the items will need, excluding the items already in the inventory. For example, if we ask for a stick, it would recursively search the recipes until it found that a stick is made from 2 planks, which can be made from a log. So the function would return a list of 'log'. This list is later passed onto the agent to find targets for its path. The crafting function also got some updates. It came to our attention that some items, when crafted, output multiple of the desired item. For example, if we wanted 2 sticks, it would look at the first stick, and deduce it needed a log, and would do the same for the second. However, this would output 2 logs, when in reality, one log provides 4 planks, and 2 planks provide 4 sticks, so we really only need 1 log. This was now accounted for in the function. 
+We also now account for items that change name when gathered. For example, when searching for diamond_ore, after mining it, it turns into just diamonds. So when searching for the next item to find, the agent will see diamond_ore in the search list, and no diamond_ore in the inventory, only diamond. This was had to be accounted for manually, since there were only 4 blocks this applied to.
 
 ## Evaluation
 #### Metrics:
