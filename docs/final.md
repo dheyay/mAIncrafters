@@ -67,14 +67,14 @@ Our agent uses the A* algorithm for navigating and shortest path finding. The A*
 
 Our implementation of the A* uses a priority queue to perform the continuous selection of the estimated minimum cost nodes to select and expand. It does this selection based on the cost of the path and an estimate of the cost required to extend the path all the way to the goal. Specifically, A* selects the path that minimizes
 
-f(n)=g(n)+h(n)}f(n)=g(n)+h(n)
+$$f(n)=g(n)+h(n)}f(n)=g(n)+h(n)$$
 
 where n is the next node on the path, g(n) is the cost of the path from the start node to n, and h(n) is a heuristic function that estimates the cost of the cheapest path from n to the goal. 
 
 A* terminates when the path it chooses to extend is a path from start to goal or if there are no paths eligible to be extended. The heuristic function we use is euclidean distance between two nodes. 
 
 
-d(p, q) = \sqrt{(q_1 - p_1)^2 + (q_2 - p_2)^2}
+$$d(p, q) = \sqrt{(q_1 - p_1)^2 + (q_2 - p_2)^2}$$
 
 Typical implementations of A* use a priority queue to perform the repeated selection of minimum (estimated) cost nodes to expand. This priority queue is known as the open set or fringe. At each step of the algorithm, the node with the lowest f(x) value is removed from the queue, the f and g values of its neighbors are updated accordingly, and these neighbors are added to the queue. The algorithm continues until a removed node (thus the node with the lowest f value out of all fringe nodes) is a goal node. The f value of that goal is then also the cost of the shortest path, since h at the goal is zero.
 
