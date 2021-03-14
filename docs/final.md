@@ -62,7 +62,7 @@ Source: [Malmo By Microsoft](https://github.com/microsoft/malmo)
 add for new agent
 
 ##### Navigation
-Our agent uses the A* algorithm for navigating and shortest path finding. The A* search is a graph traversal algorithm used for its optimality, completeness and efficiency. Being an uninformed search it is formulated in terms of a weighted graph, which in the agent's case is the observable environment, starting from a specific node. The main aim is to find the path to the goal node with the shortest cost. It does this calculation by maintaining a tree of paths. 
+Our agent uses the A* algorithm for navigating and shortest path finding. The A* search is a graph traversal algorithm used for its optimality, completeness and efficiency. Being an uninformed search it is formulated in terms of a weighted graph, which in the agent's case is the observable environment, starting from a specific node. The main aim is to find the path to the goal node with the shortest cost. It does this calculation by maintaining a tree of paths and choosing which nodes from the tree to extend/follow. 
 
 
 Our implementation of the A* uses a priority queue to perform the continuous selection of the estimated minimum cost nodes to select and expand. It does this selection based on the cost of the path and an estimate of the cost required to extend the path all the way to the goal. Specifically, A* selects the path that minimizes
@@ -79,12 +79,39 @@ A* terminates when the path it chooses to extend is a path from start to goal or
   <img src="https://user-images.githubusercontent.com/43485198/111053439-888dad80-8418-11eb-84e4-c718aa2442ed.png">
 </p>
 
-Typical implementations of A* use a priority queue to perform the repeated selection of minimum (estimated) cost nodes to expand. This priority queue is known as the open set or fringe. At each step of the algorithm, the node with the lowest f(x) value is removed from the queue, the f and g values of its neighbors are updated accordingly, and these neighbors are added to the queue. The algorithm continues until a removed node (thus the node with the lowest f value out of all fringe nodes) is a goal node. The f value of that goal is then also the cost of the shortest path, since h at the goal is zero.
+Typical implementations of A* use a priority queue to perform the repeated selection of minimum (estimated) cost nodes to expand. This priority queue is known as the open set or fringe. At each step of the algorithm, the node with the lowest f(x) value is removed from the queue, the f and g values of its neighbors are updated accordingly, and these neighbors are added to the queue as the pseudo code below specifies. The algorithm continues until a removed node (thus the node with the lowest f value out of all fringe nodes) is a goal node. The f value of that goal is then also the cost of the shortest path, since h at the goal is zero.
+
+```
+while(openset not empty): 
+        current = openset.pop()                                       - Gets the node with the lowest F value from the priority queue
+        
+        if current node == goal node:
+            return shortest path
+        
+        Add current node to closed set
+        
+        for neighbor in get_neighbors(current node):
+            if neighbor in closed set:
+                continue 
+            
+            tentativeG = g value of current node + 1
+            
+            if neighbor not in open set:
+                add neighnbor to open set
+             elif tentativeG >= neighbor.g:
+                continue
+            
+            neighbor.parent = current
+            neighbor.g = potentialG
+            neighbor.h = Euclidiean_distance(neighbor, dest_node)     - Hueristic used to calculate h(n)
+            neighbor.f = neighbor.g + neighbor.h
+```
+
+As it is shown, the A* search is an effective method of finding the shortest path on complex maps because every iteration gets the agent closer to the element it has to mine instead of wasting computation time on searching every node in the vicinity of itself. The distance between the agent and the destination is shortened every time a path is extended, ultimately giving us the absoulte shortest path while being time efficient. 
 
 <p align="center">
   <img src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Astar_progress_animation.gif">
 </p>
-
 [Source: WikiPedia](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif)
 
 ##### Crafting
