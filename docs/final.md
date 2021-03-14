@@ -68,7 +68,7 @@ Our agent uses the A* algorithm for navigating and shortest path finding. The A*
 Our implementation of the A* uses a priority queue to perform the continuous selection of the estimated minimum cost nodes to select and expand. It does this selection based on the cost of the path and an estimate of the cost required to extend the path all the way to the goal. Specifically, A* selects the path that minimizes
 
 <p align="center">
-  <img width="250" height="50" src="https://user-images.githubusercontent.com/43485198/111053426-70b62980-8418-11eb-88ab-4991b8b00839.png">
+  <img src="https://user-images.githubusercontent.com/43485198/111053426-70b62980-8418-11eb-88ab-4991b8b00839.png">
 </p>
 
 where n is the next node on the path, g(n) is the cost of the path from the start node to n, and h(n) is a heuristic function that estimates the cost of the cheapest path from n to the goal. 
