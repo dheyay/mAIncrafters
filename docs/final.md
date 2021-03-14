@@ -42,11 +42,9 @@ The way we are using Dijkstra's Algorithm in our baseline is as follows:
 
 Once the path is found and the agent moves to the location, the material in question is collected (if the material is a block, the agent breaks the block, then collects), and the location algorithm then Dijkstra's Algorithm are run in succession repeatedly until no nearby blocks are found, at which point the agent returns to the starting position. In the gif below, the basic approach for a dijkstra's shortest path algorithm is shown, when using this to find the shortest path, the agent looks at every block in all directions until the target block is seen. Then the shortest path is calculated.
 
-
-![Dijkstras_progress_animation](https://user-images.githubusercontent.com/43485198/107836543-6853cb80-6d52-11eb-81de-d6ad897d4cd8.gif)
-
-[Source: WikiPedia](https://en.wikipedia.org/wiki/File:Dijkstras_progress_animation.gif)
-
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/43485198/107836543-6853cb80-6d52-11eb-81de-d6ad897d4cd8.gif">
+</p>
 
 
 ##### Recipe Formulation and Crafting
