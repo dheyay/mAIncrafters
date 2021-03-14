@@ -75,11 +75,15 @@ where n is the next node on the path, g(n) is the cost of the path from the star
 
 A* terminates when the path it chooses to extend is a path from start to goal or if there are no paths eligible to be extended. The heuristic function we use is euclidean distance between two nodes. 
 
-![Hueristic](https://user-images.githubusercontent.com/43485198/111053439-888dad80-8418-11eb-84e4-c718aa2442ed.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/43485198/111053439-888dad80-8418-11eb-84e4-c718aa2442ed.png">
+</p>
 
 Typical implementations of A* use a priority queue to perform the repeated selection of minimum (estimated) cost nodes to expand. This priority queue is known as the open set or fringe. At each step of the algorithm, the node with the lowest f(x) value is removed from the queue, the f and g values of its neighbors are updated accordingly, and these neighbors are added to the queue. The algorithm continues until a removed node (thus the node with the lowest f value out of all fringe nodes) is a goal node. The f value of that goal is then also the cost of the shortest path, since h at the goal is zero.
 
-![Astar_progress_animation](https://upload.wikimedia.org/wikipedia/commons/5/5d/Astar_progress_animation.gif)
+<p align="center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Astar_progress_animation.gif">
+</p>
 
 [Source: WikiPedia](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif)
 
