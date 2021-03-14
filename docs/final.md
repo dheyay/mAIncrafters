@@ -83,7 +83,7 @@ Typical implementations of A* use a priority queue to perform the repeated selec
 
 ```
 while(openset not empty): 
-        current = openset.pop()                                       - Gets the node with the lowest F value from the priority queue
+        current = openset.pop() #Gets the node with the lowest F value from the priority queue
         
         if current node == goal node:
             return shortest path
@@ -103,7 +103,7 @@ while(openset not empty):
             
             neighbor.parent = current
             neighbor.g = potentialG
-            neighbor.h = Euclidiean_distance(neighbor, dest_node)     - Hueristic used to calculate h(n)
+            neighbor.h = Euclidiean_distance(neighbor, dest_node)     #Hueristic used to calculate h(n)
             neighbor.f = neighbor.g + neighbor.h
 ```
 
@@ -112,6 +112,7 @@ As it is shown, the A* search is an effective method of finding the shortest pat
 <p align="center">
   <img src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Astar_progress_animation.gif">
 </p>
+
 [Source: WikiPedia](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif)
 
 ##### Crafting
