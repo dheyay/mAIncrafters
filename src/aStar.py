@@ -113,7 +113,6 @@ def AStar(grid, start, dest, obs_size, allow_diagonal_movement=False):
         # print("Popped: ", current)
 
         if current.pos == dest_node.pos:
-            print("A Star found path!")
             return return_path(current, obs_size)
 
         closed_set.add(current.pos)

@@ -40,7 +40,7 @@ import gym, ray
 from gym.spaces import Discrete, Box
 from ray.rllib.agents import ppo
 
-# from Recipes import ITEM_RECIPES, get_ingredients
+#from Recipes import item_recipes, get_ingredients
 import aStar
 
 
@@ -62,7 +62,7 @@ class SteverCrafter():
             print(self.agent_host.getUsage())
             exit(1)
 
-        self.crafting_list = ["ladder",'iron_sword','crafting_table']
+        self.crafting_list = ["redstone_torch", "ladder",'iron_sword','crafting_table']
         self.crafting_completed = False
         # Agent's current_position:
         self.x_pos = 0
@@ -87,7 +87,7 @@ class SteverCrafter():
         self.biome_dest = None
 
         # Probabilities used in creating the world:
-        self.biome_probabilities = {"sand_biome": {"air": 0.97, "log": 0.01, "coal_ore": 0.01, "iron_ore": 0.01},
+        self.biome_probabilities = {"sand_biome": {"air": 0.96, "log": 0.01, "coal_ore": 0.01, "iron_ore": 0.01, "redstone_ore": 0.01},
                                     "snow_biome": {"air": 0.97, "iron_ore": 0.03},
                                     "stone_biome": {"air": 0.97, "stone": 0.03},
                                     "default_biome": {"air": 0.97, "log": 0.03}}
@@ -178,7 +178,7 @@ class SteverCrafter():
         cactus_obstacles = ''
         ice_obstacles = ''
         grass_obstacles = ''
-        for i in range(0, 30):
+        for i in range(0, 300):
             stonex = int(random.uniform(coordinates[r[2]][0], coordinates[r[2]][2]))
             stonez = int(random.uniform(coordinates[r[2]][1], coordinates[r[2]][3]))
             stone_obstacles = stone_obstacles + "<DrawBlock x='{}' y='64' z='{}' type='stone' />".format(stonex, stonez)
@@ -201,20 +201,22 @@ class SteverCrafter():
 
         sand_biome_materials = []
         sand_biome_key_list = sorted(list(self.biome_cdfs["sand_biome"].keys()))
+        print(sand_biome_key_list)
         for i in range(coordinates[r[0]][0], coordinates[r[0]][2]):
             for j in range(coordinates[r[0]][1], coordinates[r[0]][3]):
                 temp_index = -1
                 random_val = random.random()
                 while temp_index >= -len(sand_biome_key_list):
-                    print("sand biome key list from index:", sand_biome_key_list[temp_index])
-                    print("random value:", random_val)
+                    #print("sand biome key list from index:", sand_biome_key_list[temp_index])
+                    #print("random value:", random_val)
                     if sand_biome_key_list[temp_index] <= random_val:
                         sand_biome_materials.append((i, j, self.biome_cdfs["sand_biome"][sand_biome_key_list[temp_index+1]]))
-                        print("added: ", (i, j, self.biome_cdfs["sand_biome"][sand_biome_key_list[temp_index+1]]))
+                        #print("added: ", (i, j, self.biome_cdfs["sand_biome"][sand_biome_key_list[temp_index+1]]))
                         break
-                        print("test")
+                        #print("test")
                     temp_index -= 1
-
+        sand_biome_materials = random.sample(sand_biome_materials, 25)
+        
         snow_biome_materials = []
         snow_biome_key_list = sorted(list(self.biome_cdfs["snow_biome"].keys()))
         for i in range(coordinates[r[1]][0], coordinates[r[1]][2]):
@@ -226,6 +228,7 @@ class SteverCrafter():
                         snow_biome_materials.append((i, j, self.biome_cdfs["snow_biome"][snow_biome_key_list[temp_index+1]]))
                         break
                     temp_index -= 1
+        snow_biome_materials = random.sample(snow_biome_materials, 25)
 
         stone_biome_materials = []
         stone_biome_key_list = sorted(list(self.biome_cdfs["stone_biome"].keys()))
@@ -238,6 +241,7 @@ class SteverCrafter():
                         stone_biome_materials.append((i, j, self.biome_cdfs["stone_biome"][stone_biome_key_list[temp_index+1]]))
                         break
                     temp_index -= 1
+        stone_biome_materials = random.sample(stone_biome_materials, 25)
 
         default_biome_materials = []
         default_biome_key_list = sorted(list(self.biome_cdfs["default_biome"].keys()))
@@ -250,6 +254,7 @@ class SteverCrafter():
                         default_biome_materials.append((i, j, self.biome_cdfs["default_biome"][default_biome_key_list[temp_index+1]]))
                         break
                     temp_index -= 1
+        default_biome_materials = random.sample(default_biome_materials, 25)
 
         #print(first_biome_materials)
         #print(second_biome_materials)
@@ -492,7 +497,8 @@ class SteverCrafter():
                 if (sight_block != block_type):
                     self.agent_host.sendCommand('turn 1')
 
-                print(sight_block)
+                #
+                #print(sight_block)
                 if (sight_block == block_type):
                     allow_break_action = True
                     self.agent_host.sendCommand('attack 1')
@@ -683,10 +689,6 @@ class SteverCrafter():
                 self.true_y_dest = self.y_pos + destination_y
 
         current_location_index = (self.obs_size * 2 + 1) * self.obs_size + self.obs_size
-        # home_index = self.obs_size * 2 * (self.y_home + 50) + self.x_home + 50
-        # destination_index = self.obs_size * 2 * (self.y_dest + 50) + self.x_dest + 50
-
-        # shortest_path = self.dijkstra_shortest_path(grid, current_location_index, destination_index)
         aStar_path = aStar.AStar(grid, current_location_index, destination_index, self.obs_size)
         action_list = self.extract_action_list_from_path(aStar_path)
 
@@ -937,6 +939,8 @@ item_recipes={'anvil' : [('iron_ingot', 4), ('iron_block', 3)],
 
 if __name__ == '__main__':
     print("Starting...")
+    start = time.time()
+    
     Steve = SteverCrafter()
     world_state = Steve.init_malmo()
 
@@ -988,7 +992,7 @@ if __name__ == '__main__':
     while world_state.is_mission_running:
         # sys.stdout.write(".")
         time.sleep(0.1)
-        print("Finding Block: ", Steve.current_block)
+        #print("Finding Block: ", Steve.current_block)
 
         ## Here, we would have any destination updates. The commented-out code is
         ## an example of what going to a new location might look like, while the
@@ -1021,7 +1025,7 @@ if __name__ == '__main__':
                 count += 1
                 if len(list_of_blocks) == 0:
                     for i in Steve.crafting_list:
-                        print("Crafting", i)
+                        #print("Crafting", i)
                         Steve.craft(i)
                         Steve.reverse = True
                         Steve.current_block = "air"
@@ -1029,6 +1033,15 @@ if __name__ == '__main__':
                 elif block != list_of_blocks[0] or count > 3:
                     count = 0
                     block = list_of_blocks
+                    biome_ranks = {"sand_biome": 0,
+                   "snow_biome": 0,
+                   "stone_biome": 0,
+                   "default_biome": 0}
+
+                    for material in block:
+                        for biome in Steve.biome_probabilities:
+                            if material in Steve.biome_probabilities[biome] and Steve.biome_probabilities[biome][material]*(Steve.size**2) > 10:
+                                biome_ranks[biome] += 1
                     #block = list_of_blocks[0]
                     action_list = Steve.get_shortest_path(world_state, block, Steve.biome_dest)
 
@@ -1073,7 +1086,7 @@ if __name__ == '__main__':
         else:
             # Sending the next commend from the action list -- found using the Dijkstra algo.
             if action_index >= len(action_list):
-                print("Error:", "out of actions, but mission has not ended!")
+                #print("Error:", "out of actions, but mission has not ended!")
 
 
                 time.sleep(1)
@@ -1083,13 +1096,17 @@ if __name__ == '__main__':
                 else:
                     action_list = Steve.get_shortest_path(world_state, "air", "plank")
 
-                print("reverse:", Steve.reverse)
-                print("action_list", action_list)
-                print("current block", Steve.current_block)
+                #print("reverse:", Steve.reverse)
+                #print("action_list", action_list)
+                #print("current block", Steve.current_block)
 
                 if len(action_list) != 0:
-                    print("There is another")
+                    #print("There is another")
                     Steve.reverse = False
+                else:
+                    end = time.time()
+                    print((end-start)/60)
+                    break
 
             else:
 
@@ -1107,8 +1124,8 @@ if __name__ == '__main__':
                 elif action_list[action_index] == "movenorth 1":
                     Steve.y_pos -= 1
 
-                print("x_pos: ", Steve.x_pos)
-                print("y_pos: ", Steve.y_pos)
+                #print("x_pos: ", Steve.x_pos)
+                #print("y_pos: ", Steve.y_pos)
 
                 Steve.agent_host.sendCommand(action_list[action_index])
 
