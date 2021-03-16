@@ -6,8 +6,6 @@ title: Final Report
 ## Project Summary
 Suppose you are playing Minecraft and as a regular miner in a world, you want to start a large building project but are not sure about everything you need for it. What if you want to focus on exploring, but need complex items to progress? That is where our mAinCrafter comes in. Our agent focuses on automation of menial tasks in Minecraft to make the gameplay more streamlined and less repetitive for the player. The agent does the finding, mining, and crafting so you can focus on desigining your latest masterpiece.
 
-ADD IMAGE HERE
-
 The main goal of this project is to allow the user to give the agent items to craft and the agent will automatically move around and seek out the materials needed to craft it and acquire them. The agent will take into account the placing of the elements and if the item needed to be crafted has a sub-element that also needs crafting, it will find all the base elements needed and provide the user with the final element after crafting it. The agent will be able to find the elements in a large/complex map while avoiding obstacles and being efficient about time as well. It can also be used in order to gather materials stated by the user. 
 For example, before building a castle, the user can simply instruct the agent to gather wood or cobblestone or if you want to make a complex items, and don't want to deal with tracking down obscure crafting materials, simply start the agent and let it run while you can focus on other things.
 
