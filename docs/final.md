@@ -103,7 +103,7 @@ while(openset not empty):
             neighbor.f = neighbor.g + neighbor.h
 ```
 
-As it is shown, the A* search is an effective method of finding the shortest path on complex maps because every iteration gets the agent closer to the element it has to mine instead of wasting computation time on searching every node in the vicinity of itself. The distance between the agent and the destination is shortened every time a path is extended, ultimately giving us the absoulte shortest path while being time efficient. 
+As it is shown, the A* search is an effective method of finding the shortest path on complex maps because every iteration gets the agent closer to the element it has to mine instead of wasting computation time on searching every node in the vicinity of itself. The distance between the agent and the destination is shortened every time a path is extended, ultimately giving us the absoulte shortest path while being time efficient which is faster and more accurate than the dijkstra's for larger maps and more spread out maps.
 
 <p align="center">
   <img src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Astar_progress_animation.gif">
