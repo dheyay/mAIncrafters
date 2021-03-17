@@ -3,13 +3,13 @@ layout: default
 title: Final Report
 ---
 
+## Project Video
+
 ## Project Summary
 Suppose you are playing Minecraft and as a regular miner in a world, you want to start a large building project but are not sure about everything you need for it. What if you want to focus on exploring, but need complex items to progress? That is where our mAinCrafter comes in. Our agent focuses on automation of menial tasks in Minecraft to make the gameplay more streamlined and less repetitive for the player. The agent does the finding, mining, and crafting so you can focus on desigining your latest masterpiece.
 
 The main goal of this project is to allow the user to give the agent items to craft and the agent will automatically move around and seek out the materials needed to craft it and acquire them. The agent will take into account the placing of the elements and if the item needed to be crafted has a sub-element that also needs crafting, it will find all the base elements needed and provide the user with the final element after crafting it. The agent will be able to find the elements in a large/complex map while avoiding obstacles and being efficient about time as well. It can also be used in order to gather materials stated by the user. 
 For example, before building a castle, the user can simply instruct the agent to gather wood or cobblestone or if you want to make a complex items, and don't want to deal with tracking down obscure crafting materials, simply start the agent and let it run while you can focus on other things.
-
-#### ADD VIDEO 
 
 ## Approaches
 Our approach to the problem is divided into multiple parts with each part having a unique problem for the agent to tackle.
@@ -112,7 +112,9 @@ As it is shown, the A* search is an effective method of finding the shortest pat
 [Source: WikiPedia](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif)
 
 ##### Crafting
-Using the same method as in the baseline, we used the files from the Minecraft base code, and used it to extrapolate the recipes for all items in the game. We expand upon the crafting code implemented in the baseline, where we search the inventory, and craft the items we do not already have recursively. Adding onto what we already have, we added a function to return the base materials the items will need, excluding the items already in the inventory. For example, if we ask for a stick, it would recursively search the recipes until it found that a stick is made from 2 planks, which can be made from a log. So the function would return a list of 'log'. This list is later passed onto the agent to find targets for its path. The crafting function also got some updates. It came to our attention that some items, when crafted, output multiple of the desired item. For example, if we wanted 2 sticks, it would look at the first stick, and deduce it needed a log, and would do the same for the second. However, this would output 2 logs, when in reality, one log provides 4 planks, and 2 planks provide 4 sticks, so we really only need 1 log. This was now accounted for in the function. We also now account for items that change name when gathered. For example, when searching for diamond_ore, after mining it, it turns into just diamonds. So when searching for the next item to find, the agent will see diamond_ore in the search list, and no diamond_ore in the inventory, only diamond. This was had to be accounted for manually, since there were only 4 blocks this applied to.
+Using the same method as in the baseline, we used the files from the Minecraft base code, and used it to extrapolate the recipes for all items in the game. We expand upon the crafting code implemented in the baseline, where we search the inventory, and craft the items we do not already have recursively. Adding onto what we already have, we added a function to return the base materials the items will need, excluding the items already in the inventory. For example, if we ask for a stick, it would recursively search the recipes until it found that a stick is made from 2 planks, which can be made from a log. So the function would return a list of 'log'. 
+
+This list is later passed onto the agent to find targets for its path. The crafting function also got some updates. It came to our attention that some items, when crafted, output multiple of the desired item. For example, if we wanted 2 sticks, it would look at the first stick, and deduce it needed a log, and would do the same for the second. However, this would output 2 logs, when in reality, one log provides 4 planks, and 2 planks provide 4 sticks, so we really only need 1 log. This was now accounted for in the function. We also now account for items that change name when gathered. For example, when searching for diamond_ore, after mining it, it turns into just diamonds. So when searching for the next item to find, the agent will see diamond_ore in the search list, and no diamond_ore in the inventory, only diamond. This was had to be accounted for manually, since there were only 4 blocks this applied to.
 
 ## Evaluation
 #### Metrics:
