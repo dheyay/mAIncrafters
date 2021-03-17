@@ -112,9 +112,36 @@ As it is shown, the A* search is an effective method of finding the shortest pat
 [Source: WikiPedia](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif)
 
 ##### Crafting
-Using the same method as in the baseline, we used the files from the Minecraft base code, and used it to extrapolate the recipes for all items in the game. We expand upon the crafting code implemented in the baseline, where we search the inventory, and craft the items we do not already have recursively. Adding onto what we already have, we added a function to return the base materials the items will need, excluding the items already in the inventory. For example, if we ask for a stick, it would recursively search the recipes until it found that a stick is made from 2 planks, which can be made from a log. So the function would return a list of 'log'. 
+Using the same method as in the baseline, we used the files from the Minecraft base code, and used it to extrapolate the recipes for all items in the game. We expand upon the crafting code implemented in the baseline, where we search the inventory, and craft the items we do not already have recursively. Adding onto what we already have, we added a function to return the base materials the items will need, excluding the items already in the inventory. For example, if we ask for a stick, it would recursively search the recipes until it found that a stick is made from 2 planks, which can be made from a log. So the function would return a list of 'log'. This list is later passed onto the agent to find targets for its path.
+```
+craft(item):
+	if item is in inventory:					#We already have the item
+		return		
+	if item is in recipe_list:					#Item can be broken down into subcomponents
+		for each required_item in recipe:
+			for necessary quantity of required_item:	
+				craft(item)				#Recursion: Make all required subcomponents of each item
+	agent.sendCommand('craft "+item)
 
-This list is later passed onto the agent to find targets for its path. The crafting function also got some updates. It came to our attention that some items, when crafted, output multiple of the desired item. For example, if we wanted 2 sticks, it would look at the first stick, and deduce it needed a log, and would do the same for the second. However, this would output 2 logs, when in reality, one log provides 4 planks, and 2 planks provide 4 sticks, so we really only need 1 log. This was now accounted for in the function. We also now account for items that change name when gathered. For example, when searching for diamond_ore, after mining it, it turns into just diamonds. So when searching for the next item to find, the agent will see diamond_ore in the search list, and no diamond_ore in the inventory, only diamond. This was had to be accounted for manually, since there were only 4 blocks this applied to.
+
+
+crafting_requirements(crafting_list):								
+	for item in crafting_list:							
+		if item in inventory:							#We already have the item
+			skip
+		else:
+			add to required_item_list					#Need to craft that item
+	while(items in required_item_list can be simplified into subcomponents):	#Have not yet simplified all in crafting list to base materials
+		for items in required_item_list:
+			if item in recipe_list:
+				for each base_item in recipe:
+					for necessary quantity of base_item:
+						add base_item to required_item_list	#Add base materials to list
+				remove item from recipe_list				#Remove complex item from search list
+	
+	return required_item_list							#return list of items to search for
+```
+The above code is a very simplified psuedocode. In reality, there are several exceptions that must be handled. It came to our attention that some items, when crafted, output multiple of the desired item. For example, if we wanted 2 sticks, it would look at the first stick, and deduce it needed a log, and would do the same for the second. However, this would output 2 logs, when in reality, one log provides 4 planks, and 2 planks provide 4 sticks, so we really only need 1 log. This was now accounted for in the function. We also now account for items that change name when gathered. For example, when searching for diamond_ore, after mining it, it turns into just diamonds. So when searching for the next item to find, the agent will see diamond_ore in the search list, and no diamond_ore in the inventory, only diamond. This was had to be accounted for manually, since there were only 4 blocks this applied to.
 
 ## Evaluation
 #### Metrics:
