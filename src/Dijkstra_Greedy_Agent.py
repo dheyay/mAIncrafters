@@ -27,9 +27,7 @@ import sys
 import time
 import json
 
-## temporary until reimplementation of dijkstra's
 from priority_dict import priorityDictionary
-##
 
 
 import matplotlib.pyplot as plt
@@ -102,9 +100,6 @@ class SteverCrafter():
                 self.biome_cdfs[biome][current_cdf] = material
 
         self.reverse = False
-        # Return Stacks:
-        self.x_return = []
-        self.y_return = []
 
     def init_malmo(self):
         """
@@ -306,6 +301,7 @@ class SteverCrafter():
                     </AgentHandlers>
                   </AgentSection>
                 </Mission>'''
+    
     def crafting_reqs(self,crafting_list,obs):
         req=[]
         sticks=[]
@@ -645,43 +641,6 @@ class SteverCrafter():
 
         return action_list
 
-    def update_return_path(self, action):
-        if action == "moveeast 1":
-            if len(self.x_return) == 0:
-                self.x_return.append("movewest 1")
-            else:
-                if self.x_return[-1] == "moveeast 1":
-                    self.x_return.pop()
-                else:
-                    self.x_return.append("movewest 1")
-
-        elif action == "movewest 1":
-            if len(self.x_return) == 0:
-                self.x_return.append("moveeast 1")
-            else:
-                if self.x_return[-1] == "movewest 1":
-                    self.x_return.pop()
-                else:
-                    self.x_return.append("moveeast 1")
-
-        elif action == "movesouth 1":
-            if len(self.y_return) == 0:
-                self.y_return.append("movenorth 1")
-            else:
-                if self.y_return[-1] == "movesouth 1":
-                    self.y_return.pop()
-                else:
-                    self.y_return.append("movenorth 1")
-
-        elif action == "movenorth 1":
-            if len(self.y_return) == 0:
-                self.y_return.append("movesouth 1")
-            else:
-                if self.y_return[-1] == "movenorth 1":
-                    self.y_return.pop()
-                else:
-                    self.y_return.append("movesouth 1")
-
     def agent_near_dest(self):
         if abs(self.x_pos - self.true_x_dest) <= 1 and abs(self.y_pos - self.true_y_dest) == 0 or \
                 abs(self.x_pos - self.true_x_dest) == 0 and abs(self.y_pos - self.true_y_dest) <= 1:
@@ -908,7 +867,6 @@ if __name__ == '__main__':
             if world_state.number_of_observations_since_last_state > 0:
                 msg = world_state.observations[-1].text
                 observations = json.loads(msg)
-                ##### EDITING THIS INTO THE PATHFINDING:
     
                 list_of_blocks=Steve.crafting_tasks(observations)
                 #block = list_of_blocks[0]
@@ -930,15 +888,10 @@ if __name__ == '__main__':
             time.sleep(0.1)
     
             if Steve.agent_near_dest() and Steve.reverse == False:
-                # print("Found block")
                 allow_break = Steve.block_action(world_state, Steve.current_block)
                 #allow_break = Steve.block_action(world_state, block)
                 if allow_break == True:
     
-                    if len(action_list) == action_index:
-                        # Need to wait few seconds to let the world state realise I'm in end block.
-                        # Another option could be just to add no move actions -- I thought sleep is more elegant.
-                        time.sleep(2)
                     time.sleep(0.1)
                     world_state = Steve.agent_host.getWorldState()
                     time.sleep(0.1)
@@ -953,7 +906,6 @@ if __name__ == '__main__':
                             Steve.craft(i)
                             Steve.reverse = True
                             Steve.current_block = "air"
-                        #break
                     elif block != list_of_blocks[0] or count > 3:
                         count = 0
                         block = list_of_blocks
@@ -961,12 +913,8 @@ if __name__ == '__main__':
                         action_list = Steve.get_shortest_path(world_state, block)
     
                 action_index = 0
-                #### BREAK POINT 1 #####
-                ## From here, we would use the probabilities to pick a biome.
-                ## Once we pick a biome, we then use shortest path to
                 if Steve.reverse == False and Steve.current_block != "air":
                     action_list = Steve.get_shortest_path(world_state, block)
-                    ########################
                     time.sleep(1)
     
                 ## if there are no diamond ore in the observation view, Steve.reverse will be
@@ -977,9 +925,6 @@ if __name__ == '__main__':
             else:
                 # Sending the next commend from the action list -- found using the Dijkstra algo.
                 if action_index >= len(action_list):
-                    #print("Error:", "out of actions, but mission has not ended!")
-    
-    
                     time.sleep(1)
                     action_index = -1
                     if Steve.current_block != "air":
