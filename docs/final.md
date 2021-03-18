@@ -21,10 +21,7 @@ Our approach to the problem is divided into multiple parts with each part having
 ### Baseline
 
 ##### Locating
-For locating objects, the current version of the agent uses a spiral search though the observation level that is in the same plane as the agent (at this point in time, the agent has an observation grid equivalent in size to the world). The way it works is to iterate in a direction along the grid until it hits a "corner" spcace in the grid, then changes direction ([Source: StackOverflow](https://stackoverflow.com/questions/398299/looping-in-a-spiral)). This allows us to find the closest location with a material of interest, at which point the agent determines the shortest path there (using Dijkstra's algorithm), then goes to collect the material. After this material is collected, this is repeated, checking for the closest material to the current location. If nothing is found nearby, it currently returns to the starting point, and effectively restarts the search from there. This allows the agent to avoid missing any blocks that end up outside of the observation window after moving in a given direction.
-
-
-As the basic functions of the agent are confirmed and solidified, the observation window will be reduced to better mimic a player's view. As a result of this restriction, it will be entirely possible that no desired materials are observable from the starting point of the agent, and this is where the AI will come into play. More details will be in the Remaining Goals and Challenges section, but the short version is that we will be training the agent to associate various world characteristics and landscapes with materials, and have the agent move towards regions that are likely to contain the object in its searches.
+For locating objects, the baseline version of the agent uses greedy search composed of a spiral search though the observation level that is in the same plane as the agent (the agent has an observation grid equivalent in size to the world), then using Dijkstra's algorithm to find the best path to the found destination. The way it works is to iterate in a direction along the grid until it hits a "corner" spcace in the grid, then changes direction ([Source: StackOverflow](https://stackoverflow.com/questions/398299/looping-in-a-spiral)). This allows us to find one of the closest locations with a material of interest, while avoiding a slower search that does a true check for absolute closest, at which point the agent determines the shortest path there, then goes to collect the material. After this material is collected, this is repeated, checking for the closest material to the current location. If either all necessary materials are gathered or there are no more materials neaby, it returns to the starting point, and effectively restarts the search from there. This allows the agent to avoid missing any blocks that end up outside of the observation window after moving in a given direction.
 
 
 ##### Navigating
@@ -58,10 +55,13 @@ Source: [Malmo By Microsoft](https://github.com/microsoft/malmo)
 
 ### Proposed Approach
 
-##### Locationg
-add for new agent
+##### Locating
+For locating objects, in this version of the agent we now provide it the biome/material probabilities, and it decides the best biome to search through based on the materials it needs and its current location, which allows it to select biomes that are sufficiently supplied with materials (as per its requirements), while at the same time avoiding going entirely across the map for "extra" materials when it could get a sufficient amount by travelling between two neighboring biomes.Upon choosing the initial biome, the agent uses the same greedy search as the baseline, except it uses A* instead of Dijstra's, so we'll avoid repeating the entire process here, in favor of detailing A* below.
 
-##### Navigation
+For our final agent, we decided against reducing the observation spaceas intitially planned in the status update, instead making it more of an optimization problem than a learning. This allowed us to focus more on the idea of the agent using prior knowledge to navigate an environment, as well as on the pathfinding and navigation optimizations instead.
+
+
+##### Navigating
 Our agent uses the A* algorithm for navigating and shortest path finding. The A* search is a graph traversal algorithm used for its optimality, completeness and efficiency. Being an uninformed search it is formulated in terms of a weighted graph, which in the agent's case is the observable environment, starting from a specific node. The main aim is to find the path to the goal node with the shortest cost. It does this calculation by maintaining a tree of paths and choosing which nodes from the tree to extend/follow. 
 
 
@@ -155,7 +155,7 @@ Time spent on task: The time spent should be minimized. The AI can be considered
   <img src="https://user-images.githubusercontent.com/43485198/111566408-55218a80-875a-11eb-9f7d-fd48801387b3.png" width="500" height="300">
 </p>
 
-Another place where the agent is always successful is against a human doing the same task, an average huma would take upwards of 3 minutes on a map where the Final Agent takes 1/3rd of that time. On a larger map, the time difference would only increase in the favour of the agent. The pathfinding and element locating attribute of the agent aids its accuracy in doing its task.
+Another place where the agent is always successful is against a human doing the same task, an average human would take upwards of 3 minutes on a map where the Final Agent takes 1/3rd of that time. On a larger map, the time difference would only increase in the favour of the agent. The pathfinding and element locating attribute of the agent aids its accuracy in doing its task.
 
 #### Accuracy: 
 The measure of how close the AI is to completing the task. If all necessary materials are not available, it will be judged on how close it was to accomplishing the task, i.e. finishing all the other subtasks.
