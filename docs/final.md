@@ -8,6 +8,10 @@ title: Final Report
 ## Project Summary
 Suppose you are playing Minecraft and as a regular miner in a world, you want to start a large building project but are not sure about everything you need for it. What if you want to focus on exploring, but need complex items to progress? That is where our mAinCrafter comes in. Our agent focuses on automation of menial tasks in Minecraft to make the gameplay more streamlined and less repetitive for the player. The agent does the finding, mining, and crafting so you can focus on desigining your latest masterpiece.
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/43485198/111565913-733abb00-8759-11eb-8345-7286290a9456.png">
+</p>
+
 The main goal of this project is to allow the user to give the agent items to craft and the agent will automatically move around and seek out the materials needed to craft it and acquire them. The agent will take into account the placing of the elements and if the item needed to be crafted has a sub-element that also needs crafting, it will find all the base elements needed and provide the user with the final element after crafting it. The agent will be able to find the elements in a large/complex map while avoiding obstacles and being efficient about time as well. It can also be used in order to gather materials stated by the user. 
 For example, before building a castle, the user can simply instruct the agent to gather wood or cobblestone or if you want to make a complex items, and don't want to deal with tracking down obscure crafting materials, simply start the agent and let it run while you can focus on other things.
 
@@ -145,13 +149,11 @@ The above code is a very simplified psuedocode. In reality, there are several ex
 
 ## Evaluation
 #### Metrics:
-Time spent on task: The time spent should be minimized. The AI can be considered successful if it approaches or is better than the time spent by an average human on the same task.  
+Time spent on task: The time spent should be minimized. The AI can be considered successful if it approaches or is better than the time spent by an average human on the same task.  We ran a test run between the base agent that gets the work done and our final agent that is more efficient in a generated world with identical variables and raw material distribution. The difference between the times recorded is a good measure of how fast our agent is at doing the same tasks, i.e. finding, acquiring and crafting the required items.
 
-#### Distance travelled: 
-The amount of distance traveled by the agent should also be minimized. This can be compared to the amount of distance traveled by a human player who has not plotted out their exact path, unlike the AI.
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/43485198/111566408-55218a80-875a-11eb-9f7d-fd48801387b3.png">
+</p>
 
 #### Accuracy: 
-The measure of how close the AI is to completing the task. If all necessary materials are not available, it will be judged on how close it was to accomplishing the task, i.e. finishing all the other subtasks.  
-
-#### Baseline:
-The baseline for both metrics will be the time and distance spent by an average user. If the AI is within 150% the standard baseline, it can be regarded as successful. 
+The measure of how close the AI is to completing the task. If all necessary materials are not available, it will be judged on how close it was to accomplishing the task, i.e. finishing all the other subtasks.
