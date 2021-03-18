@@ -53,7 +53,7 @@ Using information we learned from the Malmo examples, we then find a way to actu
 
 Source: [Malmo By Microsoft](https://github.com/microsoft/malmo)
 
-### Proposed Approach
+### Final Approach
 
 ##### Locating
 For locating objects, in this version of the agent we now provide it the biome/material probabilities, and it decides the best biome to search through based on the materials it needs and its current location, which allows it to select biomes that are sufficiently supplied with materials (as per its requirements), while at the same time avoiding going entirely across the map for "extra" materials when it could get a sufficient amount by travelling between two neighboring biomes.Upon choosing the initial biome, the agent uses the same greedy search as the baseline, except it uses A* instead of Dijstra's, so we'll avoid repeating the entire process here, in favor of detailing A* below.
