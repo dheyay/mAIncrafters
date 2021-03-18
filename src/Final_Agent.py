@@ -27,9 +27,7 @@ import sys
 import time
 import json
 
-## temporary until reimplementation of dijkstra's
 from priority_dict import priorityDictionary
-##
 
 
 import matplotlib.pyplot as plt
@@ -934,7 +932,6 @@ if __name__ == '__main__':
         Steve.biome_dest = biome_to_floor[max(biome_ranks, key=biome_ranks.get)]
     
         action_list = Steve.get_shortest_path(world_state, block, Steve.biome_dest)
-        temp = 1
     
         while world_state.is_mission_running:
             
@@ -946,10 +943,6 @@ if __name__ == '__main__':
                 #allow_break = Steve.block_action(world_state, block)
                 if allow_break == True:
     
-                    if len(action_list) == action_index:
-                        # Need to wait few seconds to let the world state realise I'm in end block.
-                        # Another option could be just to add no move actions -- I thought sleep is more elegant.
-                        time.sleep(2)
                     time.sleep(0.1)
                     world_state = Steve.agent_host.getWorldState()
                     time.sleep(0.1)
@@ -981,12 +974,8 @@ if __name__ == '__main__':
                         action_list = Steve.get_shortest_path(world_state, block, Steve.biome_dest)
     
                 action_index = 0
-                #### BREAK POINT 1 #####
-                ## From here, we would use the probabilities to pick a biome.
-                ## Once we pick a biome, we then use shortest path to
                 if Steve.reverse == False and Steve.current_block != "air":
                     action_list = Steve.get_shortest_path(world_state, block, Steve.biome_dest)
-                    ########################
     
                     time.sleep(1)
 
@@ -996,7 +985,6 @@ if __name__ == '__main__':
     
             else:
                 if action_index >= len(action_list):
-                    #print("Error:", "out of actions, but mission has not ended!")
     
     
                     time.sleep(1)
@@ -1016,12 +1004,6 @@ if __name__ == '__main__':
                         break
     
                 else:
-    
-                    ## We may want code that deals with any obstacles in the agent's way as well,
-                    ## Since it's possible that the return path gets blocked
-                    ## I also want to update the dijkstra's algorithm to avoid obstacles, but that's getting
-                    ## too invested in Dijkstra's when we will be replacing it with a search eventually.
-    
                     if action_list[action_index] == "moveeast 1":
                         Steve.x_pos += 1
                     elif action_list[action_index] == "movewest 1":
