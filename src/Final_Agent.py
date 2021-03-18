@@ -88,9 +88,9 @@ class SteverCrafter():
 
         # Probabilities used in creating the world:
         self.biome_probabilities = {"sand_biome": {"air": 0.96, "log": 0.01, "coal_ore": 0.01, "iron_ore": 0.01, "redstone_ore": 0.01},
-                                    "snow_biome": {"air": 0.97, "iron_ore": 0.03},
-                                    "stone_biome": {"air": 0.97, "stone": 0.03},
-                                    "default_biome": {"air": 0.97, "log": 0.03}}
+                                    "snow_biome": {"air": 0.97, "iron_ore": 0.02, "leaves":0.01},
+                                    "stone_biome": {"air": 0.97, "stone": 0.01, "wool": 0.02},
+                                    "default_biome": {"air": 0.97, "log": 0.01, "redstone_ore": 0.01, "cobblestone": 0.01}}
 
         self.biome_cdfs = dict()
 
@@ -102,33 +102,6 @@ class SteverCrafter():
                 self.biome_cdfs[biome][current_cdf] = material
 
         #results in this with the default settings:
-
-        '''self.biome_cdfs = {"first_biome": {0.98: "air", 1: "log"},
-                           "second_biome": {0.98: "air", 1: "coal_ore"},
-                           "third_biome": {0.98: "air", 1: "iron_ore"},
-                           "fourth_biome": {0.98: "air", 1: "log"}}'''
-
-        # Add observation space and search/action space accordingly
-
-        # Keeping track of the current_shortest path; assuming we want to go back to x_home, y_home
-        ## since we haven't handled actions yet, blank for now. But the plan is to either have
-        ## the dijkstra algorithm apply at the end (in which case we'd want some kind of record
-        ## of where we've been so far), or simply keep track of the current offset from center.
-        ## for example, if we're at 5, 7, the shortest path (in discrete) is the route along
-        ## 5, 7. Then if we move up to 5, 6, we'd just remove a north movement, so that the shortest
-        ## route is now along 5, 6. Effectively, we'd have two stacks of directions. Using the
-        ## North/South stack as an example: Say we move north. Peek at the top element of the stack.
-        ## If the stack is empty, push N. If the stack has an S at the top, pop it. If the stack has
-        ## an N at the top, push the N. Same for east/west. Then, when we want to return, simply pop
-        ## all the elements of the stacks until empty. We can also work in a version of this where
-        ## we use dijkstra's on a smaller observation. While we maintain the shortest path as above,
-        ## we may may encounter a mountain or something in the z dimension that wasn't accounted for
-        ## when the shortest path was being calculated. We can then use dijkstra's on the observation
-        ## available to find the shortest path to /the closest recently visited space/, and then resume
-        ## popping the stack items. Under this model, we'd want to make sure the agent never strays
-        ## further than the observation window's distance from the travelled path when returning.
-        ## We may also want to consider a vertical "limit", in the sense that we consider any blocks
-        ## or block towers with a height above "x" is considered untraversable.
 
         self.reverse = False
         # Return Stacks:
@@ -201,14 +174,12 @@ class SteverCrafter():
 
         sand_biome_materials = []
         sand_biome_key_list = sorted(list(self.biome_cdfs["sand_biome"].keys()))
-        print(sand_biome_key_list)
+        
         for i in range(coordinates[r[0]][0], coordinates[r[0]][2]):
             for j in range(coordinates[r[0]][1], coordinates[r[0]][3]):
                 temp_index = -1
                 random_val = random.random()
                 while temp_index >= -len(sand_biome_key_list):
-                    #print("sand biome key list from index:", sand_biome_key_list[temp_index])
-                    #print("random value:", random_val)
                     if sand_biome_key_list[temp_index] <= random_val:
                         sand_biome_materials.append((i, j, self.biome_cdfs["sand_biome"][sand_biome_key_list[temp_index+1]]))
                         #print("added: ", (i, j, self.biome_cdfs["sand_biome"][sand_biome_key_list[temp_index+1]]))
@@ -256,12 +227,6 @@ class SteverCrafter():
                     temp_index -= 1
         default_biome_materials = random.sample(default_biome_materials, 25)
 
-        #print(first_biome_materials)
-        #print(second_biome_materials)
-        #print(third_biome_materials)
-        #print(fourth_biome_materials)
-
-        # print(random.uniform(coordinates[r[0]][0],coordinates[r[0]][2]),random.randrange(coordinates[r[0]][1],coordinates[r[0]][3]))
         return '''<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
                 <Mission xmlns="http://ProjectMalmo.microsoft.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
                   <About>
@@ -344,6 +309,7 @@ class SteverCrafter():
                     </AgentHandlers>
                   </AgentSection>
                 </Mission>'''
+                
     def crafting_reqs(self,crafting_list,obs):
         req=[]
         sticks=[]
@@ -443,7 +409,6 @@ class SteverCrafter():
                     x=x//4 + (1 if x%4 else 0)
                 else:
                     x=x
-                print(j[0],x)
                 for k in range(x):
                     self.craft(j[0])
         # print(item)
@@ -486,19 +451,11 @@ class SteverCrafter():
                 # First we get the json from the observation API
                 msg = world_state.observations[-1].text
                 observations = json.loads(msg)
-                # if len(self.crafting_list) != 0:
-                #     # print(self.crafting_list)
-                #     for j in self.crafting_list:
-                #         self.craft(j, observations)
-                #         print("To Craft:", j)
-
                 sight_block = observations['LineOfSight']['type']
 
                 if (sight_block != block_type):
                     self.agent_host.sendCommand('turn 1')
 
-                #
-                #print(sight_block)
                 if (sight_block == block_type):
                     allow_break_action = True
                     self.agent_host.sendCommand('attack 1')
@@ -507,10 +464,6 @@ class SteverCrafter():
 
         return allow_break_action
 
-        # self.agent_host.sendCommand('move 1') # move one ahead to make sure you collect
-
-    ## CONSIDERED EDIT: CREATE A LIST/DICT OF "BANNED" BLOCKS, SUCH AS LAVA OR AIR,
-    ## THE THE AGENT AVOIDS WHEN LOOKING AT A PATH.
     def probability(self, block_type, world_state):
         if world_state.is_mission_running:
             time.sleep(1)
@@ -519,7 +472,7 @@ class SteverCrafter():
                 msg = world_state.observations[-1].text
                 observations = json.loads(msg)
                 sight_block = observations['LineOfSight']['type']
-                print("Looking at: ", sight_block)
+                
                 if sight_block == 'sand':
                     if block_type not in self.prob_matrix:
                         self.prob_matrix[block_type] = [1, 0, 0, 0]
@@ -645,9 +598,6 @@ class SteverCrafter():
             dy = -1
             for i in range(max(X, Y) ** 2):
                 if (-X / 2 < x <= X / 2) and (-Y / 2 < y <= Y / 2):
-                    # print("location: ", x, y)
-                    # print("block at location: ", grid_obs[4*(self.obs_size**2) + self.obs_size * 2 * (y + 50) + x + 50])
-                    # print("destination_block: ", destination_block)
                     if single == False:
                         if grid_obs[(((2 * self.obs_size) + 1) ** 2) + (self.obs_size * 2 + 1) * (self.obs_size + y) + self.obs_size + x] in destination_block and\
                         grid_obs[(self.obs_size * 2 + 1) * (self.obs_size + y) + self.obs_size + x] == destination_biome:
@@ -938,205 +888,159 @@ item_recipes={'anvil' : [('iron_ingot', 4), ('iron_block', 3)],
 
 
 if __name__ == '__main__':
-    print("Starting...")
-    start = time.time()
+    time_lst = []
+    for i in range(10):
+        
+        time.sleep(2)
+        print("Starting...")
+        Steve = SteverCrafter()
+        world_state = Steve.init_malmo()
+        start = time.time()
+        
     
-    Steve = SteverCrafter()
-    world_state = Steve.init_malmo()
-
-    if world_state.is_mission_running:
-        time.sleep(0.5)
-        world_state = Steve.agent_host.getWorldState()
-        while world_state.number_of_observations_since_last_state <= 0:
+        if world_state.is_mission_running:
             time.sleep(0.5)
-
-        if world_state.number_of_observations_since_last_state > 0:
-            msg = world_state.observations[-1].text
-            observations = json.loads(msg)
-            ##### EDITING THIS INTO THE PATHFINDING:
-
-            list_of_blocks=Steve.crafting_tasks(observations)
-            #block = list_of_blocks[0]
-            block = list_of_blocks
-
-    count=0
-
-    action_index = 0
-    ## At this point, we'll need to have determined what our destination is.
-    ## Air is the default that will just send it to the default destination,
-    ## but if a block is generated in the world and that type is specified,
-    ## can use that instead and it will get the path to that block
-    biome_ranks = {"sand_biome": 0,
-                   "snow_biome": 0,
-                   "stone_biome": 0,
-                   "default_biome": 0}
-
-    for material in block:
-        for biome in Steve.biome_probabilities:
-            if material in Steve.biome_probabilities[biome] and Steve.biome_probabilities[biome][material]*(Steve.size**2) > 10:
-                biome_ranks[biome] += 1
-
-    biome_to_floor = {"sand_biome": "sand",
-                   "snow_biome": "snow",
-                   "stone_biome": "stone",
-                   "default_biome": "grass"}
-
-    Steve.biome_dest = biome_to_floor[max(biome_ranks, key=biome_ranks.get)]
-    print(Steve.biome_dest)
-
-
-    action_list = Steve.get_shortest_path(world_state, block, Steve.biome_dest)
-    # print(action_list)
-    temp = 1
-
-    while world_state.is_mission_running:
-        # sys.stdout.write(".")
-        time.sleep(0.1)
-        #print("Finding Block: ", Steve.current_block)
-
-        ## Here, we would have any destination updates. The commented-out code is
-        ## an example of what going to a new location might look like, while the
-        ## code left in is what the final return branch would look like when
-        ## taking the shortest path back.
-        ## For reference, when we are using the observation, we are going to want to convert
-        ## indices as 50 + x + obs_size * ((50 + z) + obs_size*obs_size, which will have us
-        ## accessing the first layer above ground ( and generally, we have
-        ## 50 + x + obs_size*2 * ((50 + z) + obs_size*obs_size*4*(layer above) for the observation
-        ## space of a given layer, assuming we asked for it in the XML. Layer above = 0 is the ground,
-        ## which is why when converting in the path find logic, we drop the obs_size*obs_size.
-
-        if Steve.agent_near_dest() and Steve.reverse == False:
-            # print("Found block")
-            allow_break = Steve.block_action(world_state, Steve.current_block)
-            #allow_break = Steve.block_action(world_state, block)
-            if allow_break == True:
-
-                if len(action_list) == action_index:
-                    # Need to wait few seconds to let the world state realise I'm in end block.
-                    # Another option could be just to add no move actions -- I thought sleep is more elegant.
-                    time.sleep(2)
-                time.sleep(0.1)
-                world_state = Steve.agent_host.getWorldState()
-                time.sleep(0.1)
+            world_state = Steve.agent_host.getWorldState()
+            while world_state.number_of_observations_since_last_state <= 0:
+                time.sleep(0.5)
+    
+            if world_state.number_of_observations_since_last_state > 0:
                 msg = world_state.observations[-1].text
                 observations = json.loads(msg)
-                list_of_blocks = Steve.crafting_tasks(observations)
-                print(list_of_blocks)
-                count += 1
-                if len(list_of_blocks) == 0:
-                    for i in Steve.crafting_list:
-                        #print("Crafting", i)
-                        Steve.craft(i)
-                        Steve.reverse = True
-                        Steve.current_block = "air"
-                    #break
-                elif block != list_of_blocks[0] or count > 3:
-                    count = 0
-                    block = list_of_blocks
-                    biome_ranks = {"sand_biome": 0,
-                   "snow_biome": 0,
-                   "stone_biome": 0,
-                   "default_biome": 0}
-
-                    for material in block:
-                        for biome in Steve.biome_probabilities:
-                            if material in Steve.biome_probabilities[biome] and Steve.biome_probabilities[biome][material]*(Steve.size**2) > 10:
-                                biome_ranks[biome] += 1
-                    #block = list_of_blocks[0]
+    
+                list_of_blocks=Steve.crafting_tasks(observations)
+                #block = list_of_blocks[0]
+                block = list_of_blocks
+    
+        count=0
+    
+        action_index = 0
+        
+        biome_ranks = {"sand_biome": 0,
+                       "snow_biome": 0,
+                       "stone_biome": 0,
+                       "default_biome": 0}
+    
+        for material in block:
+            for biome in Steve.biome_probabilities:
+                if material in Steve.biome_probabilities[biome] and Steve.biome_probabilities[biome][material]*(Steve.size**2) > 10:
+                    biome_ranks[biome] += 1
+    
+        biome_to_floor = {"sand_biome": "sand",
+                       "snow_biome": "snow",
+                       "stone_biome": "stone",
+                       "default_biome": "grass"}
+    
+        Steve.biome_dest = biome_to_floor[max(biome_ranks, key=biome_ranks.get)]
+    
+        action_list = Steve.get_shortest_path(world_state, block, Steve.biome_dest)
+        temp = 1
+    
+        while world_state.is_mission_running:
+            
+            time.sleep(0.1)
+            
+            if Steve.agent_near_dest() and Steve.reverse == False:
+                # print("Found block")
+                allow_break = Steve.block_action(world_state, Steve.current_block)
+                #allow_break = Steve.block_action(world_state, block)
+                if allow_break == True:
+    
+                    if len(action_list) == action_index:
+                        # Need to wait few seconds to let the world state realise I'm in end block.
+                        # Another option could be just to add no move actions -- I thought sleep is more elegant.
+                        time.sleep(2)
+                    time.sleep(0.1)
+                    world_state = Steve.agent_host.getWorldState()
+                    time.sleep(0.1)
+                    msg = world_state.observations[-1].text
+                    observations = json.loads(msg)
+                    list_of_blocks = Steve.crafting_tasks(observations)
+                    
+                    count += 1
+                    if len(list_of_blocks) == 0:
+                        for i in Steve.crafting_list:
+                            #print("Crafting", i)
+                            Steve.craft(i)
+                            Steve.reverse = True
+                            Steve.current_block = "air"
+                        #break
+                    elif block != list_of_blocks[0] or count > 3:
+                        count = 0
+                        block = list_of_blocks
+                        biome_ranks = {"sand_biome": 0,
+                       "snow_biome": 0,
+                       "stone_biome": 0,
+                       "default_biome": 0}
+    
+                        for material in block:
+                            for biome in Steve.biome_probabilities:
+                                if material in Steve.biome_probabilities[biome] and Steve.biome_probabilities[biome][material]*(Steve.size**2) > 10:
+                                    biome_ranks[biome] += 1
+                                    
+                        action_list = Steve.get_shortest_path(world_state, block, Steve.biome_dest)
+    
+                action_index = 0
+                #### BREAK POINT 1 #####
+                ## From here, we would use the probabilities to pick a biome.
+                ## Once we pick a biome, we then use shortest path to
+                if Steve.reverse == False and Steve.current_block != "air":
                     action_list = Steve.get_shortest_path(world_state, block, Steve.biome_dest)
+                    ########################
+    
+                    time.sleep(1)
 
-            ## if the agent has reached within a space of the destination;
-            ## -----------------------------------------------------------
-            ##
-            ## Code for dealing with the block would go here
-            ##
-            ## -----------------------------------------------------------
-            # Steve.do_break_action(allow_break, block_sight, block)
-
-            ## We also may want a flag of sorts here that determines if the action is a
-            ## movement or not, since the
-
-            ## Then, depending on what we're looking for, go for the next closest item:
-            ## Here, I just assume we're only mining diamond ore. In reality, we'd
-            ## probably want a list/data structure with the items we want, which would
-            ## function here
-
-            ## Just find the next diamond_ore:
-            # if (len(needed) > 0 and allow_break == True):
-            #     block = needed.pop()
-
-            action_index = 0
-            #### BREAK POINT 1 #####
-            ## From here, we would use the probabilities to pick a biome.
-            ## Once we pick a biome, we then use shortest path to
-            if Steve.reverse == False and Steve.current_block != "air":
-                action_list = Steve.get_shortest_path(world_state, block, Steve.biome_dest)
-                ########################
-
-
-                # print("Finding new block: ", action_list)
-                time.sleep(1)
-
-            ## if there are no diamond ore in the observation view, Steve.reverse will be
-            ## set to true, and action_list will be empty
-            if Steve.reverse == True:
-                Steve.biome_dest = "plank"
-                action_list = Steve.get_shortest_path(world_state, "air", Steve.biome_dest)
-
-        else:
-            # Sending the next commend from the action list -- found using the Dijkstra algo.
-            if action_index >= len(action_list):
-                #print("Error:", "out of actions, but mission has not ended!")
-
-
-                time.sleep(1)
-                action_index = -1
-                if Steve.current_block != "air":
-                    action_list = Steve.get_shortest_path(world_state, block, Steve.biome_dest)
-                else:
-                    action_list = Steve.get_shortest_path(world_state, "air", "plank")
-
-                #print("reverse:", Steve.reverse)
-                #print("action_list", action_list)
-                #print("current block", Steve.current_block)
-
-                if len(action_list) != 0:
-                    #print("There is another")
-                    Steve.reverse = False
-                else:
-                    end = time.time()
-                    print((end-start)/60)
-                    break
-
+                if Steve.reverse == True:
+                    Steve.biome_dest = "plank"
+                    action_list = Steve.get_shortest_path(world_state, "air", Steve.biome_dest)
+    
             else:
-
-                ## We may want code that deals with any obstacles in the agent's way as well,
-                ## Since it's possible that the return path gets blocked
-                ## I also want to update the dijkstra's algorithm to avoid obstacles, but that's getting
-                ## too invested in Dijkstra's when we will be replacing it with a search eventually.
-
-                if action_list[action_index] == "moveeast 1":
-                    Steve.x_pos += 1
-                elif action_list[action_index] == "movewest 1":
-                    Steve.x_pos -= 1
-                elif action_list[action_index] == "movesouth 1":
-                    Steve.y_pos += 1
-                elif action_list[action_index] == "movenorth 1":
-                    Steve.y_pos -= 1
-
-                #print("x_pos: ", Steve.x_pos)
-                #print("y_pos: ", Steve.y_pos)
-
-                Steve.agent_host.sendCommand(action_list[action_index])
-
-            action_index += 1
-
-            if len(action_list) == action_index:
-                # Need to wait few seconds to let the world state realise I'm in end block.
-                # Another option could be just to add no move actions -- I thought sleep is more elegant.
-                time.sleep(2)
-
-            world_state = Steve.agent_host.getWorldState()
-
-            for error in world_state.errors:
-                print("Error:", error.text)
+                if action_index >= len(action_list):
+                    #print("Error:", "out of actions, but mission has not ended!")
+    
+    
+                    time.sleep(1)
+                    action_index = -1
+                    if Steve.current_block != "air":
+                        action_list = Steve.get_shortest_path(world_state, block, Steve.biome_dest)
+                    else:
+                        action_list = Steve.get_shortest_path(world_state, "air", "plank")
+                        
+                    if len(action_list) != 0:
+                        Steve.reverse = False
+                    else:
+                        end = time.time()
+                        time_lst.append((end-start)/60)
+                        Steve.agent_host.sendCommand('quit')
+                        print((end-start)/60)
+                        break
+    
+                else:
+    
+                    ## We may want code that deals with any obstacles in the agent's way as well,
+                    ## Since it's possible that the return path gets blocked
+                    ## I also want to update the dijkstra's algorithm to avoid obstacles, but that's getting
+                    ## too invested in Dijkstra's when we will be replacing it with a search eventually.
+    
+                    if action_list[action_index] == "moveeast 1":
+                        Steve.x_pos += 1
+                    elif action_list[action_index] == "movewest 1":
+                        Steve.x_pos -= 1
+                    elif action_list[action_index] == "movesouth 1":
+                        Steve.y_pos += 1
+                    elif action_list[action_index] == "movenorth 1":
+                        Steve.y_pos -= 1
+    
+                    Steve.agent_host.sendCommand(action_list[action_index])
+    
+                action_index += 1
+    
+                if len(action_list) == action_index:
+                    time.sleep(2)
+    
+                world_state = Steve.agent_host.getWorldState()
+    
+                for error in world_state.errors:
+                    print("Error:", error.text)
+                    
+    print(time_lst)
