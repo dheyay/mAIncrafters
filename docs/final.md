@@ -151,8 +151,8 @@ The above code is a very simplified psuedocode. In reality, there are several ex
 #### Metrics:
 Time spent on task: The time spent should be minimized. The AI can be considered successful if it approaches or is better than the time spent by an average human on the same task.  We ran a test run between the base agent that gets the work done and our final agent that is more efficient in a generated world with identical variables and raw material distribution. The difference between the times recorded is a good measure of how fast our agent is at doing the same tasks, i.e. finding, acquiring and crafting the required items. The agent is always faster than the baseline even though the elements around the map are scattered and generated randomly.
 
-<p align="center" width="250" height="50">
-  <img src="https://user-images.githubusercontent.com/43485198/111566408-55218a80-875a-11eb-9f7d-fd48801387b3.png">
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/43485198/111566408-55218a80-875a-11eb-9f7d-fd48801387b3.png" width="500" height="300">
 </p>
 
 Another place where the agent is always successful is against a human doing the same task, an average huma would take upwards of 3 minutes on a map where the Final Agent takes 1/3rd of that time. On a larger map, the time difference would only increase in the favour of the agent. The pathfinding and element locating attribute of the agent aids its accuracy in doing its task.
@@ -160,3 +160,12 @@ Another place where the agent is always successful is against a human doing the 
 #### Accuracy: 
 The measure of how close the AI is to completing the task. If all necessary materials are not available, it will be judged on how close it was to accomplishing the task, i.e. finishing all the other subtasks.
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/43485198/111568418-f2ca8900-875d-11eb-84ae-2ca3afd35c32.jpg" width="400" height="235">
+</p>
+
+The agent here is still collecting the raw materials needed for crafting, once it does, it will craft them and the items crafted will be available in the inventory for the agent. This can be considered a successful crafting run for the agent. If an element cannot be found on the map, the agent will go on to get the rest of the elements needed and craft all items that can be crafted from the available materials.
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/43485198/111568536-2d342600-875e-11eb-8ded-1a7acd223d38.jpg" width="400" height="235">
+</p>
