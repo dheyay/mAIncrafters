@@ -164,8 +164,10 @@ The measure of how close the AI is to completing the task. If all necessary mate
   <img src="https://user-images.githubusercontent.com/43485198/111568418-f2ca8900-875d-11eb-84ae-2ca3afd35c32.jpg" width="400" height="235">
 </p>
 
-The agent here is still collecting the raw materials needed for crafting, once it does, it will craft them and the items crafted will be available in the inventory for the agent. This can be considered a successful crafting run for the agent. If an element cannot be found on the map, the agent will go on to get the rest of the elements needed and craft all items that can be crafted from the available materials. The above agent was given the following items to craft: [ladder, crafting table, sword, redstone_torch]. After it's search, it only found enough materials to craft the ladder, crafting table and the redstone torch. Due to lack of materials the sword could not be crafted. This highlights the accuracy of the agent in terms of what needs to be crafted and how many elements are available in the environment.
+The agent here is still collecting the raw materials needed for crafting, once it does, it will craft them and the items crafted will be available in the inventory for the agent. This can be considered a successful crafting run for the agent. If an element cannot be found on the map, the agent will go on to get the rest of the elements needed and craft all items that can be crafted from the available materials. The above agent was given the following items to craft: [ladder, crafting table, sword, redstone_torch]. 
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/43485198/111568536-2d342600-875e-11eb-8ded-1a7acd223d38.jpg" width="400" height="235">
 </p>
+
+After it's search, it only found enough materials to craft the ladder, crafting table and the redstone torch. Due to lack of materials the sword could not be crafted. This highlights the accuracy of the agent in terms of what needs to be crafted and how many elements are available in the environment.
