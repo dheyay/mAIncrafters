@@ -161,13 +161,13 @@ The above code is a very simplified psuedocode. In reality, there are several ex
 #### Time Taken:
 The time spent should be minimized. The AI can be considered successful if it approaches or is better than the time spent by an average human on the same task.  We ran a test run between the base agent that gets the work done and our final agent that is more efficient in a generated world with identical variables and raw material distribution. The difference between the times recorded is a good measure of how fast our agent is at doing the same tasks, i.e. finding, acquiring and crafting the required items. The agent is always faster than the baseline even though the elements around the map are scattered and generated randomly. 
 
-The way these trials were set up were with a random world generated, then an agent run. This was repeated 
+The way these trials were set up were with a random world generated, then an agent run. This was repeated 20 times for each of the two agents. In terms of "solving" the problem, these runs demonstrate the agent's capabilities in terms of speed of collection. As touched on further below, the agent collects materials enough for four items, with an average of around 1.2 minutes. This includes the agent starting at the "base", calculating the paths and going out to the various necessary materials, crafting the materials, and returning to base in a world on the order of 10000 blocks in total, which we believe is a success in providing the service it is meant to.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/43485198/111566408-55218a80-875a-11eb-9f7d-fd48801387b3.png" width="500" height="300">
 </p>
 
-Another place where the agent is always successful is against a human doing the same task, an average human would take upwards of 3 minutes on a map where the Final Agent takes 1/3rd of that time. On a larger map, the time difference would only increase in the favour of the agent. The pathfinding and element locating attribute of the agent aids its accuracy in doing its task.
+Another place where the agent is always successful (though not drawn here), is against a human doing the same task. An average human would take upwards of 3 minutes on a map where the Final Agent takes roughly 1/3rd of that time. On a larger map, the time difference would only increase in the favour of the agent due to the advantage it enjoys in being able to quickly isolate and directly travel to a meterial. The pathfinding and element locating attribute of the agent aids its accuracy in doing its task.
 
 #### Accuracy: 
 The measure of how close the AI is to completing the task. If all necessary materials are not available, it will be judged on how close it was to accomplishing the task, i.e. finishing all the other subtasks.
