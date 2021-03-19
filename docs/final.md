@@ -1,12 +1,10 @@
 ---
 layout: default
 title: Final Report
+youtubeId: Edq2pziGCWY
 ---
 ## Project Video
-{% include youtubePlayer.html id=Edq2pziGCWY %}
-{% comment %} 
-    [![Image_presentation](https://user-images.githubusercontent.com/43485198/107839513-4c0b5b00-6d61-11eb-8c12-af1234b17ddc.png)](https://youtu.be/Edq2pziGCWY)
-{% endcomment %}
+{% include youtubePlayer.html id=page.youtubeId %}
 
 
 ## Project Summary
