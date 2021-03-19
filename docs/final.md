@@ -4,6 +4,11 @@ title: Final Report
 ---
 
 ## Project Video
+{% include youtubePlayer.html id=page.youtubeId %}
+{% comment %} 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Edq2pziGCWY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+{% endcomment %}
+
 
 ## Project Summary
 Suppose you are playing Minecraft and as a regular miner in a world, you want to start a large building project but are not sure about everything you need for it. What if you want to focus on exploring, but need complex items to progress? That is where our mAinCrafter comes in. Our agent focuses on automation of menial tasks in Minecraft to make the gameplay more streamlined and less repetitive for the player. The agent does the finding, mining, and crafting so you can focus on desigining your latest masterpiece.
