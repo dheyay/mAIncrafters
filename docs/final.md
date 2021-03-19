@@ -6,7 +6,7 @@ title: Final Report
 ## Project Video
 {% include youtubePlayer.html id=page.youtubeId %}
 {% comment %} 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Edq2pziGCWY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    [![Image_presentation](https://user-images.githubusercontent.com/43485198/107839513-4c0b5b00-6d61-11eb-8c12-af1234b17ddc.png)](https://youtu.be/Edq2pziGCWY)
 {% endcomment %}
 
 
