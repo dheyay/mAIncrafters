@@ -13,7 +13,7 @@ Suppose you are playing Minecraft and as a regular miner in a world, you want to
 </p>
 
 The main goal of this project is to allow the user to give the agent items to craft and the agent will automatically move around and seek out the materials needed to craft it and acquire them. The agent will take into account the placing of the elements and if the item needed to be crafted has a sub-element that also needs crafting, it will find all the base elements needed and provide the user with the final element after crafting it. The agent will be able to find the elements in a large/complex map while avoiding obstacles and being efficient about time as well. It can also be used in order to gather materials stated by the user. 
-For example, before building a castle, the user can simply instruct the agent to gather wood or cobblestone or if you want to make a complex items, and don't want to deal with tracking down obscure crafting materials, simply start the agent and let it run while you can focus on other things.
+For example, before building a castle, the user can simply instruct the agent to gather wood or cobblestone. Alternatively, if you want to make a complex items and don't want to deal with tracking down obscure crafting materials, you can simply start the agent and let it run while you can focus on other things.
 
 ## Approaches
 Our approach to the problem is divided into multiple parts with each part having a unique problem for the agent to tackle.
@@ -21,12 +21,11 @@ Our approach to the problem is divided into multiple parts with each part having
 ### Baseline
 
 ##### Locating
-For locating objects, the baseline version of the agent uses greedy search composed of a spiral search though the observation level that is in the same plane as the agent (the agent has an observation grid equivalent in size to the world), then using Dijkstra's algorithm to find the best path to the found destination. The way it works is to iterate in a direction along the grid until it hits a "corner" spcace in the grid, then changes direction ([Source: StackOverflow](https://stackoverflow.com/questions/398299/looping-in-a-spiral)). This allows us to find one of the closest locations with a material of interest, while avoiding a slower search that does a true check for absolute closest, at which point the agent determines the shortest path there, then goes to collect the material. After this material is collected, this is repeated, checking for the closest material to the current location. If either all necessary materials are gathered or there are no more materials neaby, it returns to the starting point, and effectively restarts the search from there. This allows the agent to avoid missing any blocks that end up outside of the observation window after moving in a given direction.
+For locating objects, the baseline version of the agent uses greedy search composed of a spiral search though the observation level that is in the same plane as the agent (the agent has an observation grid equivalent in size to the world), then using Dijkstra's algorithm to find the best path to the found destination. The way it works is to iterate in a direction along the grid until it hits a "corner" spcace in the grid, then changes direction ([Source: StackOverflow](https://stackoverflow.com/questions/398299/looping-in-a-spiral)). This allows us to find one of the closest locations with a material of interest, while avoiding a slower search that does a true check for absolute closest, at which point the agent determines the shortest path there, then goes to collect the material. After this material is collected, this is repeated, checking for the closest material to the current location that we are interested in. If either all necessary materials are gathered or there are no more materials neaby, it returns to the starting point, and effectively restarts the search from there. This allows the agent to avoid missing any blocks that end up outside of the observation window after moving in a given direction.
 
 
 ##### Navigating
-Dijkstra's shortest path Algorithm was used as our method of navigation for the baseline once we have determined the location of the object we are looking for. We used Dijkstra's algorithm to find the path between the agent's current location and some material location in two dimensions, while we have a stack implemented to keep record of the current shortest path back. As the environment got more complex, Dijkstra's was also be used to find the return path from the agent's current location to the starting position in coordination with the general path from the stack (since the farther we go, we will eventually be out of observation range of the starting point).
-
+Dijkstra's shortest path Algorithm was used as our method of navigation for the baseline once we have determined the location of the object we are looking for. We used Dijkstra's algorithm to find the path between the agent's current location and some material location in two dimensions. As the environment got more complex, Dijkstra's was also used to find the return path from the agent's current location to the starting position.
 
 Dijkstra's shortest path for the agent: 
 The way we are using Dijkstra's Algorithm in our baseline is as follows:
@@ -40,6 +39,10 @@ The way we are using Dijkstra's Algorithm in our baseline is as follows:
 
 
 Once the path is found and the agent moves to the location, the material in question is collected (if the material is a block, the agent breaks the block, then collects), and the location algorithm then Dijkstra's Algorithm are run in succession repeatedly until no nearby blocks are found, at which point the agent returns to the starting position. In the gif below, the basic approach for a dijkstra's shortest path algorithm is shown, when using this to find the shortest path, the agent looks at every block in all directions until the target block is seen. Then the shortest path is calculated.
+
+Dijkstra's was used as a baseline since it is relatively easy to implement, and provides solid results. It also serves a basis with which to compare the A* component of our agent. However, it is also guaranteed to produce the path necessary.
+
+Additionally, in our generated world there were a variety of obstacles in the forms of pillars on the map. While navigating, the agent had to be sure to strictly avoid these, rather than merely run into them and adjust, since we included cacti as obstacles as well. If the agent were allowed to run into obstacles, it'd be possible for the agent to kill itself on the cacti before reaching its goal. With this in mind, the agent strictly avoids obstacles while checking for the shortest path (specifically: could not just have an agent run directly to the location).
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/43485198/107836543-6853cb80-6d52-11eb-81de-d6ad897d4cd8.gif">
@@ -56,9 +59,13 @@ Source: [Malmo By Microsoft](https://github.com/microsoft/malmo)
 ### Final Approach
 
 ##### Locating
-For locating objects, in this version of the agent we now provide it the biome/material probabilities, and it decides the best biome to search through based on the materials it needs and its current location, which allows it to select biomes that are sufficiently supplied with materials (as per its requirements), while at the same time avoiding going entirely across the map for "extra" materials when it could get a sufficient amount by travelling between two neighboring biomes.Upon choosing the initial biome, the agent uses the same greedy search as the baseline, except it uses A* instead of Dijstra's, so we'll avoid repeating the entire process here, in favor of detailing A* below.
+For locating objects, in this version of the agent we now provide it the biome/material probabilities, and it decides the best biome to search through based on the materials it needs and its current location, which allows it to select biomes that are sufficiently supplied with materials (as per its requirements), while at the same time avoiding going entirely across the map for "extra" materials when it could get a sufficient amount by travelling between two neighboring biomes. Upon choosing the initial biome, the agent uses the same greedy search as the baseline, except it uses A* instead of Dijkstra's, so we'll avoid repeating the entire process here, in favor of detailing A* below. 
+
+To elaborate a bit more on the probabilities, we had a biome to material mapping, where each material in the biome in turn mapped to a probability of being generated in the map. The world is generated using these probabilities, and the agent has access to them for the purpose of choosing which biome should be its destination after each successive material is gathered. In this sense, the agent "knew" what to expect, and even with full access to the map, still used this method for planning successive paths. 
 
 For our final agent, we decided against reducing the observation spaceas intitially planned in the status update, instead making it more of an optimization problem than a learning. This allowed us to focus more on the idea of the agent using prior knowledge to navigate an environment, as well as on the pathfinding and navigation optimizations instead.
+
+We initially attempted to create another baseline that would fully utililize the fully-observed environment (a la Traveling Salesman), but as we were testing it on larger and larger worlds (50x50 was the size of the status world, while we are using 100x100 here), while it charted the most efficient path and thus had the shortest travel time, its computation time far exceeded what would have been necessary to be competitive with even the Dijkstra's baseline, and so further development was halted, since it as the world size grew, the agent using this method would only perform poorer and poorer. This also solidified our position using the probabilities to provide an estimate of the best start, and then using a greedy search within the environment that the agent expected to yield the best results.
 
 
 ##### Navigating
@@ -107,7 +114,9 @@ while(openset not empty):
             neighbor.f = neighbor.g + neighbor.h
 ```
 
-As it is shown, the A* search is an effective method of finding the shortest path on complex maps because every iteration gets the agent closer to the element it has to mine instead of wasting computation time on searching every node in the vicinity of itself. The distance between the agent and the destination is shortened every time a path is extended, ultimately giving us the absoulte shortest path while being time efficient which is faster and more accurate than the dijkstra's for larger maps and more spread out maps.
+As shown, the A* search is an effective method of finding the shortest path on complex maps because every iteration gets the agent closer to the element it has to mine instead of wasting computation time on searching every node in the vicinity of itself. The distance between the agent and the destination is shortened every time a path is extended, ultimately giving us the absolute shortest path while being time efficient which is faster and more accurate than the Dijkstra's for larger maps and more spread out maps.
+
+As with the Dijkstra's baseline, this agent had to navigate around obstacles that had the potential to harm, and so had to be strictly accurate in terms of navigation path, otherwisse it would have been possible for the agent to die in the middle of a run (specifically: could not just have an agent run directly to the location).
 
 <p align="center">
   <img src="https://upload.wikimedia.org/wikipedia/commons/5/5d/Astar_progress_animation.gif">
