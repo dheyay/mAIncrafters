@@ -159,7 +159,9 @@ The above code is a very simplified psuedocode. In reality, there are several ex
 
 ## Evaluation
 #### Time Taken:
-The time spent should be minimized. The AI can be considered successful if it approaches or is better than the time spent by an average human on the same task.  We ran a test run between the base agent that gets the work done and our final agent that is more efficient in a generated world with identical variables and raw material distribution. The difference between the times recorded is a good measure of how fast our agent is at doing the same tasks, i.e. finding, acquiring and crafting the required items. The agent is always faster than the baseline even though the elements around the map are scattered and generated randomly.
+The time spent should be minimized. The AI can be considered successful if it approaches or is better than the time spent by an average human on the same task.  We ran a test run between the base agent that gets the work done and our final agent that is more efficient in a generated world with identical variables and raw material distribution. The difference between the times recorded is a good measure of how fast our agent is at doing the same tasks, i.e. finding, acquiring and crafting the required items. The agent is always faster than the baseline even though the elements around the map are scattered and generated randomly. 
+
+The way these trials were set up were with a random world generated, then an agent run. This was repeated 
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/43485198/111566408-55218a80-875a-11eb-9f7d-fd48801387b3.png" width="500" height="300">
