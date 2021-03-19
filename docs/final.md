@@ -23,7 +23,7 @@ Our approach to the problem is divided into multiple parts with each part having
 ### Baseline
 
 ##### Locating
-For locating objects, the baseline version of the agent uses greedy search composed of a spiral search though the observation level that is in the same plane as the agent (the agent has an observation grid equivalent in size to the world), then using Dijkstra's algorithm to find the best path to the found destination. The way it works is to iterate in a direction along the grid until it hits a "corner" spcace in the grid, then changes direction ([Source: StackOverflow](https://stackoverflow.com/questions/398299/looping-in-a-spiral)). This allows us to find one of the closest locations with a material of interest, while avoiding a slower search that does a true check for absolute closest, at which point the agent determines the shortest path there, then goes to collect the material. After this material is collected, this is repeated, checking for the closest material to the current location that we are interested in. If either all necessary materials are gathered or there are no more materials neaby, it returns to the starting point, and effectively restarts the search from there. This allows the agent to avoid missing any blocks that end up outside of the observation window after moving in a given direction.
+For locating objects, the baseline version of the agent uses greedy search composed of a spiral search though the observation level that is in the same plane as the agent (the agent has an observation grid equivalent in size to the world), then using Dijkstra's algorithm to find the best path to the found destination. The way it works is to iterate in a direction along the grid until it hits a "corner" spcace in the grid, then changes direction. This allows us to find one of the closest locations with a material of interest, while avoiding a slower search that does a true check for absolute closest, at which point the agent determines the shortest path there, then goes to collect the material. After this material is collected, this is repeated, checking for the closest material to the current location that we are interested in. If either all necessary materials are gathered or there are no more materials neaby, it returns to the starting point, and effectively restarts the search from there. This allows the agent to avoid missing any blocks that end up outside of the observation window after moving in a given direction.
 
 
 ##### Navigating
@@ -184,6 +184,17 @@ The agent here is still collecting the raw materials needed for crafting, once i
   <img src="https://user-images.githubusercontent.com/43485198/111568536-2d342600-875e-11eb-8ded-1a7acd223d38.jpg" width="400" height="235">
 </p>
 
-After it's search, it only found enough materials to craft the ladder, crafting table and the redstone torch. Due to lack of materials the sword could not be crafted. This highlights the accuracy of the agent in terms of what needs to be crafted and how many elements are available in the environment.
+After it's search, it only found enough materials to craft the ladder, crafting table and the redstone torch. Due to lack of materials the sword could not be crafted. This highlights the accuracy of the agent in terms of what needs to be crafted and how many elements are available in the environment. In the cases where sufficient material is available, the agent manages to craft all the desired items with high accuracy. Of the 20 test runs shown in the time graph, none had any issues crafting all items.
 
-In the cases where all material is available, the agent manages to craft all the desired items with high accuracy, with little to no errors. Of the 20 test runs shown in the time graph, none had any issues crafting all items.
+## References
+
+Spiral Search: https://stackoverflow.com/questions/398299/looping-in-a-spiral
+
+Dijkstra's Algorithm: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+
+A* Algorithm: https://en.wikipedia.org/wiki/A*_search_algorithm
+
+Crafting items: https://github.com/microsoft/malmo
+
+All images used in the report and project website are screen captures from the actual project.
+
