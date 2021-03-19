@@ -8,14 +8,13 @@ youtubeId: Edq2pziGCWY
 
 
 ## Project Summary
-Suppose you are playing Minecraft and as a regular miner in a world, you want to start a large building project but are not sure about everything you need for it. What if you want to focus on exploring, but need complex items to progress? That is where our mAinCrafter comes in. Our agent focuses on automation of menial tasks in Minecraft to make the gameplay more streamlined and less repetitive for the player. The agent does the finding, mining, and crafting so you can focus on desigining your latest masterpiece.
+Suppose you are playing Minecraft as a regular miner in a world; you want to start a large building project, but are not sure what you need for it. Maybe you want to focus on exploring, but need complex items to progress. That is where our mAIncrafter agent comes in. It focuses on automation of menial tasks in Minecraft to make the gameplay more streamlined and less repetitive for the player. The agent does the finding, mining, and crafting so you can focus on desigining your latest masterpiece.
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/43485198/111565913-733abb00-8759-11eb-8345-7286290a9456.png">
 </p>
 
-The main goal of this project is to allow the user to give the agent items to craft and the agent will automatically move around and seek out the materials needed to craft it and acquire them. The agent will take into account the placing of the elements and if the item needed to be crafted has a sub-element that also needs crafting, it will find all the base elements needed and provide the user with the final element after crafting it. The agent will be able to find the elements in a large/complex map while avoiding obstacles and being efficient about time as well. It can also be used in order to gather materials stated by the user. 
-For example, before building a castle, the user can simply instruct the agent to gather wood or cobblestone. Alternatively, if you want to make a complex items and don't want to deal with tracking down obscure crafting materials, you can simply start the agent and let it run while you can focus on other things.
+The main goal of this project is to allow the user to give the agent items to craft and have the agent automatically move around and seek out the materials needed to craft and acquire them. The agent will take into account the placing of the elements, and if the item needed to be crafted has a sub-element that also needs crafting, it will find all the base elements needed and provide the user with the final element after crafting it. The agent is able to find the elements in a large/complex map while avoiding obstacles and ensuring time efficiency. It can also be used in order to gather direct materials as given by the user, for example, before building a castle, the user can simply instruct the agent to gather wood or cobblestone. Alternatively, if you want to make a complex items and don't want to deal with tracking down obscure crafting materials, you can simply start the agent and let it run while you focus on other things.
 
 ## Approaches
 Our approach to the problem is divided into multiple parts with each part having a unique problem for the agent to tackle.
