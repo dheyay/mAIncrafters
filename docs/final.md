@@ -185,3 +185,5 @@ The agent here is still collecting the raw materials needed for crafting, once i
 </p>
 
 After it's search, it only found enough materials to craft the ladder, crafting table and the redstone torch. Due to lack of materials the sword could not be crafted. This highlights the accuracy of the agent in terms of what needs to be crafted and how many elements are available in the environment.
+
+In the cases where all material is available, the agent manages to craft all the desired items with high accuracy, with little to no errors. Of the 20 test runs shown in the time graph, none had any issues crafting all items.
