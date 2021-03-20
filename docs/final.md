@@ -22,11 +22,11 @@ Our approach to the problem is divided into multiple parts with each part having
 
 ### Baseline
 
-##### Locating
+#### Locating
 For locating objects, the baseline version of the agent uses greedy search composed of a spiral search though the observation level that is in the same plane as the agent (the agent has an observation grid equivalent in size to the world), then using Dijkstra's algorithm to find the best path to the found destination. The way it works is to iterate in a direction along the grid until it hits a "corner" spcace in the grid, then changes direction. This allows us to find one of the closest locations with a material of interest, while avoiding a slower search that does a true check for absolute closest, at which point the agent determines the shortest path there, then goes to collect the material. After this material is collected, this is repeated, checking for the closest material to the current location that we are interested in. If either all necessary materials are gathered or there are no more materials neaby, it returns to the starting point, and effectively restarts the search from there. This allows the agent to avoid missing any blocks that end up outside of the observation window after moving in a given direction.
 
 
-##### Navigating
+#### Navigating
 Dijkstra's shortest path Algorithm was used as our method of navigation for the baseline once we have determined the location of the object we are looking for. We used Dijkstra's algorithm to find the path between the agent's current location and some material location in two dimensions. As the environment got more complex, Dijkstra's was also used to find the return path from the agent's current location to the starting position.
 
 Dijkstra's shortest path for the agent: 
@@ -51,7 +51,7 @@ Additionally, in our generated world there were a variety of obstacles in the fo
 </p>
 
 
-##### Recipe Formulation and Crafting
+#### Recipe Formulation and Crafting
 Malmo provides functions to craft items. However, there is no feature that examines recipes for the materials required. To do so, we found the files provided by Minecraft itself, and found the base code. By developing a file analysis code, we were able to open and extract the recipe from each of the files (1 for each craftable item). Once we got the information, we placed it into one large dictionary in python, with each variable name as the key and the recipe as the value (a list with a tuple containing the material name and quantity for each ingredient). 
 
 Using information we learned from the Malmo examples, we then find a way to actually craft the items. The function begins with analyzing the inventory, to see what materials we already have. Once we know this, we examine the recipe by checking the dictionary, and for each item required, we check the quantity required and subtract the amount we have in the inventory. Then we recursively call the craft function until we reach an item that is not in the recipe dictionary (therefore cannot be crafted and must be found in the game, like logs, or cobblestone). The agent must find these items. From there, we begin to craft each component, sometimes having to go through many iterations of crafting until we reach the intended item. For example: if we send the craft function for a stone pickaxe, it would recursively search for 3 cobblestone, and for 2 sticks. If they are not in the inventory, it would send the agent to look for cobblestone, and for a log since the log is used for planks which is how you make sticks which is how you make the pickaxe)
@@ -60,7 +60,7 @@ Source: [Malmo By Microsoft](https://github.com/microsoft/malmo)
 
 ### Final Approach
 
-##### Locating
+#### Locating
 For locating objects, in this version of the agent we now provide it the biome/material probabilities, and it decides the best biome to search through based on the materials it needs and its current location, which allows it to select biomes that are sufficiently supplied with materials (as per its requirements), while at the same time avoiding going entirely across the map for "extra" materials when it could get a sufficient amount by travelling between two neighboring biomes. Upon choosing the initial biome, the agent uses the same greedy search as the baseline, except it uses A* instead of Dijkstra's, so we'll avoid repeating the entire process here, in favor of detailing A* below. 
 
 To elaborate a bit more on the probabilities, we had a biome to material mapping, where each material in the biome in turn mapped to a probability of being generated in the map. The world is generated using these probabilities, and the agent has access to them for the purpose of choosing which biome should be its destination after each successive material is gathered. In this sense, the agent "knew" what to expect, and even with full access to the map, still used this method for planning successive paths. 
@@ -70,7 +70,7 @@ For our final agent, we decided against reducing the observation spaceas intitia
 We initially attempted to create another baseline that would fully utililize the fully-observed environment (a la Traveling Salesman), but as we were testing it on larger and larger worlds (50x50 was the size of the status world, while we are using 100x100 here), while it charted the most efficient path and thus had the shortest travel time, its computation time far exceeded what would have been necessary to be competitive with even the Dijkstra's baseline, and so further development was halted, since it as the world size grew, the agent using this method would only perform poorer and poorer. This also solidified our position using the probabilities to provide an estimate of the best start, and then using a greedy search within the environment that the agent expected to yield the best results.
 
 
-##### Navigating
+#### Navigating
 Our agent uses the A* algorithm for navigating and shortest path finding. The A* search is a graph traversal algorithm used for its optimality, completeness and efficiency. Being an uninformed search it is formulated in terms of a weighted graph, which in the agent's case is the observable environment, starting from a specific node. The main aim is to find the path to the goal node with the shortest cost. It does this calculation by maintaining a tree of paths and choosing which nodes from the tree to extend/follow. 
 
 
@@ -126,7 +126,7 @@ As with the Dijkstra's baseline, this agent had to navigate around obstacles tha
 
 [Source: WikiPedia](https://en.wikipedia.org/wiki/A*_search_algorithm#/media/File:Astar_progress_animation.gif)
 
-##### Crafting
+#### Crafting
 
 Using the same method as in the baseline, we used the files from the Minecraft base code, and used it to extrapolate the recipes for all items in the game. We expand upon the crafting code implemented in the baseline, where we search the inventory, and craft the items we do not already have recursively. Adding onto what we already have, we added a function to return the base materials the items will need, excluding the items already in the inventory. For example, if we ask for a stick, it would recursively search the recipes until it found that a stick is made from 2 planks, which can be made from a log. So the function would return a list of 'log'. This list is later passed onto the agent to find targets for its path.
 ```
